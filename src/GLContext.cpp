@@ -31,6 +31,11 @@ GLContext::GLContext(int width, int height, const std::string &title) {
   glfwSwapInterval(0);
 
   SetupCallbacks();
+
+  glEnable(GL_DEPTH_TEST);
+  glDepthFunc(GL_LEQUAL);
+  glEnable(GL_CULL_FACE);
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 }
 
 void GLContext::SetupCallbacks() {

@@ -7,3 +7,6 @@
 [submodule "dependencies/glad"]
 	path = dependencies/glad
 	url = https://github.com/weixu000/glad.git
+[submodule "dependencies/tinyobjloader"]
+	path = dependencies/tinyobjloader
+	url = https://github.com/syoyo/tinyobjloader.git

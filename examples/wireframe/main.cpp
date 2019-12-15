@@ -1,11 +1,13 @@
 #include <iostream>
 #include <glm/gtx/transform.hpp>
+
 #include <PixelFactory/GLContext.h>
 #include <PixelFactory/Entity.h>
 #include <PixelFactory/Camera.h>
-#include <PixelFactory/Axes.h>
+#include <PixelFactory/Mesh.h>
 #include <PixelFactory/Trackball.h>
 #include <PixelFactory/DrawOptions.h>
+#include <PixelFactory/GLVertexArray.h>
 
 class Window : public GLContext {
  public:
@@ -13,12 +15,12 @@ class Window : public GLContext {
     camera_ = scene_.AddChild(Entity(glm::translate(glm::vec3(0.0f, 0.0f, 20.0f))))
         ->AddComponent(Camera(Width(), Height()));
     auto axes = scene_.AddChild(Entity());
-    axes->AddComponent(Axes());
     axes->AddComponent(Trackball(camera_));
+    auto mesh = axes->AddComponent(Mesh::FromObjFile("meshes/bunny.obj"));
   }
 
   void Draw() override {
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     scene_.Draw(DrawOptions{*camera_});
   }
 

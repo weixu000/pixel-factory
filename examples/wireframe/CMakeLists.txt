@@ -1,0 +1,2 @@
+add_executable(Wireframe main.cpp)
+target_link_libraries(Wireframe PixelFactory)
