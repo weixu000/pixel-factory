@@ -12,7 +12,8 @@ add_library(PixelFactory STATIC
         Trackball.cpp ../include/PixelFactory/Trackball.h
         Camera.cpp ../include/PixelFactory/Camera.h
         Axes.cpp ../include/PixelFactory/Axes.h
-        Mesh.cpp ../include/PixelFactory/Mesh.h AABB.cpp ../include/PixelFactory/AABB.h)
+        Mesh.cpp ../include/PixelFactory/Mesh.h AABB.cpp ../include/PixelFactory/AABB.h
+        ../include/PixelFactory/EventHandler.h)
 target_link_libraries(PixelFactory PUBLIC glad glfw glm tinyobjloader)
 target_include_directories(PixelFactory PUBLIC ../include)
 target_compile_features(PixelFactory PUBLIC cxx_std_17)

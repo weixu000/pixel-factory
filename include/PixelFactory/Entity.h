@@ -12,6 +12,7 @@ class MouseButtonEvent;
 class CursorPositionEvent;
 class ScrollEvent;
 class DrawOptions;
+class EventHandler;
 
 class Component;
 
@@ -49,17 +50,9 @@ class Entity {
     return AddComponent(std::make_unique<std::remove_reference_t<T>>(std::forward<T>(component)));
   }
 
-  void OnKeyPress(const KeyEvent &e);
+  [[nodiscard]] EventHandler *GetEventHandler() const { return handler_; }
 
-  void OnKeyRelease(const KeyEvent &e);
-
-  void OnMouseMove(const CursorPositionEvent &e);
-
-  void OnMouseButtonPress(const MouseButtonEvent &e);
-
-  void OnMouseButtonRelease(const MouseButtonEvent &e);
-
-  void OnScroll(const ScrollEvent &e);
+  void SetEventHandler(EventHandler *handler) { handler_ = handler; }
 
  private:
   Entity *parent_ = nullptr;
@@ -84,6 +77,8 @@ class Entity {
       func(*component);
     }
   }
+
+  EventHandler *handler_ = nullptr;
 };
 
 

@@ -1,17 +1,21 @@
 #pragma once
 
-struct ResizeEvent {
+struct Event {
+
+};
+
+struct ResizeEvent : public Event {
   int width, height;
 };
 
-struct KeyEvent {
+struct KeyEvent : public Event {
   int key;
   int scancode;
   int action;
   int mods;
 };
 
-struct MouseButtonEvent {
+struct MouseButtonEvent : public Event {
   float x;
   float y;
   int button;
@@ -19,12 +23,12 @@ struct MouseButtonEvent {
   int mods;
 };
 
-struct CursorPositionEvent {
+struct CursorPositionEvent : public Event {
   float x;
   float y;
 };
 
-struct ScrollEvent {
+struct ScrollEvent : public Event {
   float x_offset, y_offset;
 };
 

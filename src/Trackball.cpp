@@ -6,6 +6,18 @@
 #include <PixelFactory/Event.h>
 #include <PixelFactory/Entity.h>
 #include <PixelFactory/Camera.h>
+#include <PixelFactory/EventHandler.h>
+
+void Trackball::Start() {
+  entity_->GetEventHandler()->Bind<CursorPositionEvent>("MouseMove",
+                                                        [this](const CursorPositionEvent &e) { OnMouseMove(e); });
+  entity_->GetEventHandler()->Bind<MouseButtonEvent>("MouseButtonPress",
+                                                     [this](const MouseButtonEvent &e) { OnMouseButtonPress(e); });
+  entity_->GetEventHandler()->Bind<MouseButtonEvent>("MouseButtonRelease",
+                                                     [this](const MouseButtonEvent &e) { OnMouseButtonRelease(e); });
+  entity_->GetEventHandler()->Bind<ScrollEvent>("Scroll",
+                                                [this](const ScrollEvent &e) { OnScroll(e); });
+}
 
 void Trackball::OnMouseMove(const CursorPositionEvent &e) {
   auto x = e.x / camera_->Width();

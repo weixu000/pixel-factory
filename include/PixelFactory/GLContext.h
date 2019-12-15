@@ -1,14 +1,11 @@
 #pragma once
 
 #include <tuple>
+#include <memory>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-class ResizeEvent;
-class KeyEvent;
-class MouseButtonEvent;
-class CursorPositionEvent;
-class ScrollEvent;
+class EventHandler;
 
 class GLContext {
  public:
@@ -43,19 +40,7 @@ class GLContext {
 
   virtual void Draw() {}
 
-  virtual void OnResize(const ResizeEvent &e) {}
-
-  virtual void OnKeyPress(const KeyEvent &e) {}
-
-  virtual void OnKeyRelease(const KeyEvent &e) {}
-
-  virtual void OnMouseMove(const CursorPositionEvent &e) {}
-
-  virtual void OnMouseButtonPress(const MouseButtonEvent &e) {}
-
-  virtual void OnMouseButtonRelease(const MouseButtonEvent &e) {}
-
-  virtual void OnScroll(const ScrollEvent &e) {}
+  std::unique_ptr<EventHandler> handler_;
 
  private:
   void SetupCallbacks();
