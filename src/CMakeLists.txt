@@ -1,10 +1,10 @@
 add_library(PixelFactory STATIC
         ../include/PixelFactory/Event.h
-        GLContext.cpp ../include/PixelFactory/GLContext.h
-        ../include/PixelFactory/GLBuffer.h
-        ../include/PixelFactory/GLVertexArray.h
-        ../include/PixelFactory/GLUniform.h
-        GLShader.cpp ../include/PixelFactory/GLShader.h
+        GLContext.cpp ../include/PixelFactory/GL/GLContext.h
+        ../include/PixelFactory/GL/GLBuffer.h
+        ../include/PixelFactory/GL/GLVertexArray.h
+        ../include/PixelFactory/GL/GLUniform.h
+        GLShader.cpp ../include/PixelFactory/GL/GLShader.h
         ../include/PixelFactory/DrawOptions.h
         ../include/PixelFactory/Transform.h
         Entity.cpp ../include/PixelFactory/Entity.h

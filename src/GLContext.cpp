@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <PixelFactory/GLContext.h>
+#include <PixelFactory/GL/GLContext.h>
 #include <PixelFactory/Event.h>
 #include <PixelFactory/EventHandler.h>
 

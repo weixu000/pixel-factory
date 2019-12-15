@@ -3,11 +3,11 @@
 #include <glm/gtx/euler_angles.hpp>
 
 #include <PixelFactory/Axes.h>
-#include <PixelFactory/GLBuffer.h>
-#include <PixelFactory/GLVertexArray.h>
+#include <PixelFactory/GL/GLBuffer.h>
+#include <PixelFactory/GL/GLVertexArray.h>
 #include <PixelFactory/DrawOptions.h>
 #include <PixelFactory/Camera.h>
-#include <PixelFactory/GLShader.h>
+#include <PixelFactory/GL/GLShader.h>
 #include <PixelFactory/Entity.h>
 
 namespace {
@@ -26,7 +26,7 @@ Axes::Axes() {
     vao_->Bind();
 
     GLBuffer vbo;
-    vbo.Bind(GLBufferTarget::ArrayBuffer);
+    vbo.Bind(GLBuffer::Target::ArrayBuffer);
     vbo.Upload(sizeof(glm::vec3) * vertices.size(), vertices.data());
 
     vao_->SetAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3));

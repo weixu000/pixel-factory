@@ -1,13 +1,13 @@
 #include <iostream>
 #include <glm/gtx/transform.hpp>
 
-#include <PixelFactory/GLContext.h>
+#include <PixelFactory/GL/GLContext.h>
 #include <PixelFactory/Entity.h>
 #include <PixelFactory/Camera.h>
 #include <PixelFactory/Mesh.h>
 #include <PixelFactory/Trackball.h>
 #include <PixelFactory/DrawOptions.h>
-#include <PixelFactory/GLVertexArray.h>
+#include <PixelFactory/GL/GLVertexArray.h>
 #include <PixelFactory/EventHandler.h>
 #include <PixelFactory/Event.h>
 

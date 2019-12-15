@@ -2,14 +2,14 @@
 
 #include <glad/glad.h>
 
-enum class GLBufferTarget : GLenum {
-  Unbound = 0U,
-  ArrayBuffer = GL_ARRAY_BUFFER,
-  ElementArrayBuffer = GL_ELEMENT_ARRAY_BUFFER
-};
-
 class GLBuffer {
  public:
+  enum class Target : GLenum {
+    Unbound = 0U,
+    ArrayBuffer = GL_ARRAY_BUFFER,
+    ElementArrayBuffer = GL_ELEMENT_ARRAY_BUFFER
+  };
+
   GLBuffer() {
     glGenBuffers(1, &id_);
   }
@@ -22,19 +22,20 @@ class GLBuffer {
     glBufferData(static_cast<GLenum>(target_), size, data, usage);
   }
 
-  void Bind(GLBufferTarget target) {
+  void Bind(Target target) {
     target_ = target;
     glBindBuffer(static_cast<GLenum>(target_), id_);
   }
 
   void Unbind() {
     glBindBuffer(static_cast<GLenum>(target_), 0);
+    target_ = Target::Unbound;
   }
 
  private:
   GLuint id_ = 0U;
 
-  GLBufferTarget target_ = GLBufferTarget::Unbound;
+  Target target_ = Target::Unbound;
 };
 
 

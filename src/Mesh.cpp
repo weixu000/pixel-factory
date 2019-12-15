@@ -4,9 +4,9 @@
 #include <tiny_obj_loader.h>
 
 #include <PixelFactory/Mesh.h>
-#include <PixelFactory/GLVertexArray.h>
-#include <PixelFactory/GLBuffer.h>
-#include <PixelFactory/GLShader.h>
+#include <PixelFactory/GL/GLVertexArray.h>
+#include <PixelFactory/GL/GLBuffer.h>
+#include <PixelFactory/GL/GLShader.h>
 #include <PixelFactory/Entity.h>
 #include <PixelFactory/DrawOptions.h>
 #include <PixelFactory/Camera.h>
@@ -27,7 +27,7 @@ Mesh::Mesh(const std::vector<GLuint> &indices, const std::vector<glm::vec3> &att
   vao_->Bind();
   GLBuffer vbo, ebo;
 
-  vbo.Bind(GLBufferTarget::ArrayBuffer);
+  vbo.Bind(GLBuffer::Target::ArrayBuffer);
   vbo.Upload(sizeof(glm::vec3) * attributes.size(), attributes.data());
   vao_->SetAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
                          2 * sizeof(glm::vec3));
@@ -35,7 +35,7 @@ Mesh::Mesh(const std::vector<GLuint> &indices, const std::vector<glm::vec3> &att
                          2 * sizeof(glm::vec3), sizeof(glm::vec3));
   vbo.Unbind();
 
-  ebo.Bind(GLBufferTarget::ElementArrayBuffer);
+  ebo.Bind(GLBuffer::Target::ElementArrayBuffer);
   // Pass in the data.
   ebo.Upload(sizeof(GLuint) * indices.size(), indices.data());
 

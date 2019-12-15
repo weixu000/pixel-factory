@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <PixelFactory/GLShader.h>
+#include <PixelFactory/GL/GLShader.h>
 
 namespace {
 enum class ShaderType : GLenum {
