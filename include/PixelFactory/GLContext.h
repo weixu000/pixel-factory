@@ -1,8 +1,14 @@
 #pragma once
 
+#include <tuple>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <tuple>
+
+class ResizeEvent;
+class KeyEvent;
+class MouseButtonEvent;
+class CursorPositionEvent;
+class ScrollEvent;
 
 class GLContext {
  public:
@@ -16,9 +22,9 @@ class GLContext {
 
   GLContext &operator=(const GLContext &) = delete;
 
-  [[nodiscard]] int Width() const { return std::get<0>(WindowSize()); }
+  [[nodiscard]] int Width() const { return std::get<0>(FramebufferSize()); }
 
-  [[nodiscard]] int Height() const { return std::get<1>(WindowSize()); }
+  [[nodiscard]] int Height() const { return std::get<1>(FramebufferSize()); }
 
   void Loop();
 
@@ -27,9 +33,9 @@ class GLContext {
 
   static GLContext *Retrieve(GLFWwindow *w) { return reinterpret_cast<GLContext *>(glfwGetWindowUserPointer(w)); }
 
-  [[nodiscard]] std::tuple<int, int> WindowSize() const {
+  [[nodiscard]] std::tuple<int, int> FramebufferSize() const {
     int width, height;
-    glfwGetWindowSize(window_, &width, &height);
+    glfwGetFramebufferSize(window_, &width, &height);
     return std::make_tuple(width, height);
   }
 
@@ -37,15 +43,19 @@ class GLContext {
 
   virtual void Draw() {}
 
-  virtual void ResizeCallback(int width, int height) {}
+  virtual void OnResize(const ResizeEvent &e) {}
 
-  virtual void KeyCallback(int key, int scancode, int action, int mods) {}
+  virtual void OnKeyPress(const KeyEvent &e) {}
 
-  virtual void MouseButtonCallback(int button, int action, int mods) {}
+  virtual void OnKeyRelease(const KeyEvent &e) {}
 
-  virtual void CursorPosCallback(double x, double y) {}
+  virtual void OnMouseMove(const CursorPositionEvent &e) {}
 
-  virtual void ScrollCallback(double xoffset, double yoffset) {}
+  virtual void OnMouseButtonPress(const MouseButtonEvent &e) {}
+
+  virtual void OnMouseButtonRelease(const MouseButtonEvent &e) {}
+
+  virtual void OnScroll(const ScrollEvent &e) {}
 
  private:
   void SetupCallbacks();

@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include <PixelFactory/GLContext.h>
+#include <PixelFactory/Event.h>
 
 GLContext::GLContext(int width, int height, const std::string &title) {
   // 4x antialiasing.
@@ -36,28 +37,44 @@ void GLContext::SetupCallbacks() {
   // Set the key callback.
   glfwSetKeyCallback(window_,
                      [](GLFWwindow *window, int key, int scancode, int action, int mods) {
-                       Retrieve(window)->KeyCallback(key, scancode, action, mods);
+                       KeyEvent e{key, scancode, action, mods};
+                       switch (e.action) {
+                         case GLFW_PRESS:Retrieve(window)->OnKeyPress(e);
+                           break;
+                         case GLFW_RELEASE:Retrieve(window)->OnKeyRelease(e);
+                           break;
+                         default:break;
+                       }
                      });
   // Set the window_ resize callback.
-  glfwSetWindowSizeCallback(window_,
-                            [](GLFWwindow *window, int width, int height) {
-                              Retrieve(window)->ResizeCallback(width, height);
-                            });
+  glfwSetFramebufferSizeCallback(window_,
+                                 [](GLFWwindow *window, int width, int height) {
+                                   Retrieve(window)->OnResize(ResizeEvent{width, height});
+                                 });
   // Set the mouse button callback.
   glfwSetMouseButtonCallback(window_,
                              [](GLFWwindow *window, int button, int action, int mods) {
-                               Retrieve(window)->MouseButtonCallback(button, action, mods);
+                               double x, y;
+                               glfwGetCursorPos(window, &x, &y);
+                               MouseButtonEvent e{float(x), float(y), button, action, mods};
+                               switch (e.action) {
+                                 case GLFW_PRESS:Retrieve(window)->OnMouseButtonPress(e);
+                                   break;
+                                 case GLFW_RELEASE:Retrieve(window)->OnMouseButtonRelease(e);
+                                   break;
+                                 default:break;
+                               }
                              });
   // Set the cursor position callback.
   glfwSetCursorPosCallback(window_,
                            [](GLFWwindow *window, double x, double y) {
-                             Retrieve(window)->CursorPosCallback(x, y);
+                             Retrieve(window)->OnMouseMove(CursorPositionEvent{float(x), float(y)});
                            });
 
   // Set the scroll callback.
   glfwSetScrollCallback(window_,
                         [](GLFWwindow *window, double xoffset, double yoffset) {
-                          Retrieve(window)->ScrollCallback(xoffset, yoffset);
+                          Retrieve(window)->OnScroll(ScrollEvent{float(xoffset), float(yoffset)});
                         });
 }
 void GLContext::Loop() {
