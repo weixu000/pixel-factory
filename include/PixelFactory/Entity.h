@@ -34,10 +34,6 @@ class Entity {
 
   void SetLocalTransform(const Transform &t);
 
-  void Draw(const DrawOptions &options);
-
-  void Update();
-
   template<typename T>
   T *AddComponent(std::unique_ptr<T> component) {
     component->Attach(this);
@@ -45,16 +41,28 @@ class Entity {
     return static_cast<T *>(components_.back().get());
   }
 
-  template<typename T>
+  template <typename T>
   std::remove_reference_t<T> *AddComponent(T &&component) {
-    return AddComponent(std::make_unique<std::remove_reference_t<T>>(std::forward<T>(component)));
+    return AddComponent(std::make_unique<std::remove_reference_t<T>>(
+        std::forward<T>(component)));
   }
 
   [[nodiscard]] EventHandler *GetEventHandler() const { return handler_; }
 
   void SetEventHandler(EventHandler *handler) { handler_ = handler; }
 
- private:
+  template <typename Func> void ForEachDescendant(Func func) const {
+    func(*this);
+    ForEachChild(func);
+  }
+
+  template <typename Func> void ForEachComponent(Func func) const {
+    for (auto &component : components_) {
+      func(*component);
+    }
+  }
+
+private:
   Entity *parent_ = nullptr;
 
   std::list<std::unique_ptr<Entity>> children_;
@@ -64,17 +72,9 @@ class Entity {
 
   std::list<std::unique_ptr<Component>> components_;
 
-  template<typename Func>
-  void ForEachChild(Func func) {
-    for (auto &child:children_) {
+  template <typename Func> void ForEachChild(Func func) const {
+    for (auto &child : children_) {
       func(*child);
-    }
-  }
-
-  template<typename Func>
-  void ForEachComponent(Func func) {
-    for (auto &component:components_) {
-      func(*component);
     }
   }
 

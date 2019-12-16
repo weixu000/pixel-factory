@@ -36,8 +36,6 @@ class GLContext {
     return std::make_tuple(width, height);
   }
 
-  virtual void Update() {}
-
   virtual void Draw() {}
 
   std::unique_ptr<EventHandler> handler_;

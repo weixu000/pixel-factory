@@ -10,21 +10,12 @@ class Component {
     Start();
   }
 
-  void Detach() {
-    entity_ = nullptr;
-    Stop();
-  }
-
-  virtual void Draw(const DrawOptions &options) {}
-
-  virtual void Update() {}
+  [[nodiscard]] Entity *GetEntity() const { return entity_; }
 
  protected:
   Entity *entity_ = nullptr;
 
   virtual void Start() {}
-
-  virtual void Stop() {}
 };
 
 

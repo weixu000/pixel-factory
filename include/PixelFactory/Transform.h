@@ -7,6 +7,8 @@ struct Transform {
 
   operator glm::mat4() { return matrix; }
 
+  [[nodiscard]] glm::vec3 Translation() const { return glm::vec3(matrix[3]); }
+
   glm::mat4 matrix;
 };
 

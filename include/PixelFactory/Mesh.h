@@ -7,27 +7,25 @@
 #include <glm/glm.hpp>
 
 #include <PixelFactory/Component.h>
+#include <PixelFactory/PhongMaterial.h>
 
 class GLVertexArray;
-class AABB;
 
 class Mesh : public Component {
  public:
-  Mesh(const std::vector<GLuint> &indices, const std::vector<glm::vec3> &attributes);
+  struct Attribute {
+    glm::vec3 position;
+    glm::vec3 normal;
+    glm::vec2 texture;
+  };
 
-  void Draw(const DrawOptions &options) override;
+  Mesh(const std::vector<GLuint> &indices, const std::vector<Attribute> &attributes);
 
   static Mesh FromObjFile(const std::string &file_path);
 
-  static Mesh FaceNormalMesh(const std::vector<GLuint> &indices, const std::vector<glm::vec3> &vertices);
-
-  static Mesh FromAABB(const AABB &bb);
-
-  static Mesh Cube();
-
- private:
-  GLsizei count_ = 0;
-  std::unique_ptr<GLVertexArray> vao_;
+  PhongMaterial material_;
+  const GLsizei count_;
+  std::shared_ptr<GLVertexArray> vao_;
 };
 
 

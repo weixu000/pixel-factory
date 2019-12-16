@@ -8,7 +8,7 @@ class Axes : public Component {
  public:
   Axes();
 
-  void Draw(const DrawOptions &options) override;
+  void Draw(const DrawOptions &options);
 };
 
 

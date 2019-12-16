@@ -4,12 +4,10 @@
 #include <PixelFactory/GL/GLContext.h>
 #include <PixelFactory/Event.h>
 #include <PixelFactory/EventHandler.h>
+#include <PixelFactory/Time.h>
 
 GLContext::GLContext(int width, int height, const std::string &title) {
-  // 4x antialiasing.
-  glfwWindowHint(GLFW_SAMPLES, 4);
-
-  // Create the GLFW window_.
+  // Create the GLFW window.
   window_ = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   // Check if the window_ could not be created.
   if (!window_) {
@@ -88,9 +86,11 @@ void GLContext::SetupCallbacks() {
                         });
 }
 void GLContext::Loop() {
+  Time::Reset();
   while (!glfwWindowShouldClose(window_)) {
+    Time::Tick();
     glfwPollEvents();
-    Update();
+    handler_->ProcessEvent("Update", UpdateEvent{{}, Time::Delta()});
     Draw();
     glfwSwapBuffers(window_);
   }

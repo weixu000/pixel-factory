@@ -2,17 +2,22 @@
 
 #include <PixelFactory/Camera.h>
 #include <PixelFactory/Entity.h>
+#include <PixelFactory/Event.h>
+#include <PixelFactory/EventHandler.h>
 
-void Camera::Update() {
-  auto cam = entity_->WorldTransform().matrix;
-  view_ = glm::inverse(cam);
-  eye_ = glm::vec3(cam[3]);
+void Camera::OnUpdate(const UpdateEvent &event) {
+  view_ = glm::inverse(entity_->WorldTransform().matrix);
+  eye_ = entity_->WorldTransform().Translation();
 }
 
 void Camera::Resize(float w, float h) {
   width_ = w;
   height_ = h;
-  projection_ = glm::perspective(glm::radians(fovy_),
-                                 width_ / height_,
-                                 z_near_, z_far_);
+  projection_ =
+      glm::perspective(glm::radians(fovy_), width_ / height_, z_near_, z_far_);
+}
+
+void Camera::Start() {
+  entity_->GetEventHandler()->Bind<UpdateEvent>(
+      "Update", [this](const UpdateEvent &e) { OnUpdate(e); });
 }

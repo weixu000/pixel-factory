@@ -4,6 +4,10 @@ struct Event {
 
 };
 
+struct UpdateEvent : public Event {
+  float delta_time;
+};
+
 struct ResizeEvent : public Event {
   int width, height;
 };

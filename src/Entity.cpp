@@ -1,5 +1,4 @@
 #include <PixelFactory/Entity.h>
-#include <PixelFactory/Event.h>
 
 Entity *Entity::AddChild(std::unique_ptr<Entity> child) {
   child->parent_ = this;
@@ -16,14 +15,4 @@ void Entity::SetLocalTransform(const Transform &t) {
   } else {
     world_transform_ = local_transform_;
   }
-}
-
-void Entity::Draw(const DrawOptions &options) {
-  ForEachComponent([&](Component &component) { component.Draw(options); });
-  ForEachChild([&](Entity &child) { child.Draw(options); });
-}
-
-void Entity::Update() {
-  ForEachComponent([&](Component &component) { component.Update(); });
-  ForEachChild([&](Entity &child) { child.Update(); });
 }

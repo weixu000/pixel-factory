@@ -6,11 +6,10 @@
 class Camera;
 class MouseButtonEvent;
 class CursorPositionEvent;
-class ScrollEvent;
 
-class Trackball : public Component {
+class FreeRotator : public Component {
  public:
-  explicit Trackball(Camera *cam) : camera_(cam) {}
+  explicit FreeRotator(Camera *cam) : camera_(cam) {}
 
   void OnMouseMove(const CursorPositionEvent &e);
 
@@ -18,17 +17,15 @@ class Trackball : public Component {
 
   void OnMouseButtonRelease(const MouseButtonEvent &e);
 
-  void OnScroll(const ScrollEvent &e);
-
  protected:
   void Start() override;
 
  private:
-  static glm::vec3 ViewportToTrackball(float x, float y);
-
-  bool started_ = false;
-  glm::mat4 orientation_{1.0f};
-  glm::vec3 initial_;
+  bool startedRotate = false;
+  glm::vec2 previous = glm::vec2(0.0f);
+  float eulerX = 0.0f, eulerY = 0.0f;
 
   Camera *camera_;
 };
+
+

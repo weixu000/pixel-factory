@@ -3,11 +3,13 @@
 
 #include <PixelFactory/Component.h>
 
+class UpdateEvent;
+
 class Camera : public Component {
  public:
   explicit Camera(float w, float h) { Resize(w, h); }
 
-  void Update() override;
+  void OnUpdate(const UpdateEvent &event);
 
   void Resize(float w, float h);
 
@@ -20,6 +22,9 @@ class Camera : public Component {
   [[nodiscard]] float Width() const { return width_; }
 
   [[nodiscard]] float Height() const { return height_; }
+
+ protected:
+  void Start() override;
 
  private:
   glm::mat4 projection_, view_;
