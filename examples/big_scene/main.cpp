@@ -63,9 +63,15 @@ class Window : public GLContext {
       }
     }
 
-    auto light = scene_.AddChild(Entity(glm::translate(glm::vec3(5.0f))))->AddComponent(PointLight());
-    light->color = glm::vec3(5.0f);
-    light->attenuation = 0.2f;
+    auto light = PointLight();
+    light.color = glm::vec3(50.0f);
+    light.attenuation = 0.5f;
+    for (int i = 0; i < 2; ++i) {
+      for (int j = 0; j < 2; ++j) {
+        scene_.AddChild(Entity(glm::translate(glm::vec3(20 * i, 5.0f, 20 * j))))
+            ->AddComponent(PointLight(light));
+      }
+    }
   }
 
   void OnResize(const ResizeEvent &e) {

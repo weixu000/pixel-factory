@@ -112,6 +112,9 @@ void DeferredRenderer::LightingPass(const DrawOptions &options) {
   lighting_pass_shader->SetUniform("gAlbedoSpec", 2);
   lighting_pass_shader->SetUniform("eye", options.camera.Eye());
 
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_ONE, GL_ONE);
+  glBlendEquation(GL_FUNC_ADD);
   for (auto &light:lights_) {
     lighting_pass_shader->SetUniform("light.position", light->GetEntity()->WorldTransform().Translation());
     lighting_pass_shader->SetUniform("light.color", light->color);
@@ -119,4 +122,5 @@ void DeferredRenderer::LightingPass(const DrawOptions &options) {
 
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
   }
+  glDisable(GL_BLEND);
 }
