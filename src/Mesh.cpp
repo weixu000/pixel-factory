@@ -14,12 +14,7 @@ Mesh::Mesh(const std::vector<GLuint> &indices, const std::vector<Attribute> &att
 
   vbo.Bind(GLBuffer::Target::ArrayBuffer);
   vbo.Upload(sizeof(Attribute) * attributes.size(), attributes.data());
-  vao_->SetAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
-                         sizeof(Attribute));
-  vao_->SetAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-                         sizeof(Attribute), sizeof(glm::vec3));
-  vao_->SetAttribPointer(2, 2, GL_FLOAT, GL_FALSE,
-                         sizeof(Attribute), 2 * sizeof(glm::vec3));
+  vao_->SetAttribPointer<Attribute>();
   vbo.Unbind();
 
   ebo.Bind(GLBuffer::Target::ElementArrayBuffer);
@@ -54,11 +49,11 @@ Mesh Mesh::FromObjFile(const std::string &file_path) {
       auto t = 2 * index.texcoord_index;
       auto[it_index, inserted] = indices_map.insert(std::make_pair(std::make_tuple(v, n, t), attributes.size()));
       if (inserted) {
-        attributes.push_back(Attribute{
+        attributes.emplace_back(
             glm::vec3(attrib.vertices[v], attrib.vertices[v + 1], attrib.vertices[v + 2]),
             glm::vec3(attrib.normals[n], attrib.normals[n + 1], attrib.normals[n + 2]),
             glm::vec2(attrib.texcoords[t], attrib.texcoords[t + 1])
-        });
+        );
       }
       indices.push_back(it_index->second);
     }

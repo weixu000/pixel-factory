@@ -13,12 +13,7 @@ class GLVertexArray;
 
 class Mesh : public Component {
  public:
-  struct Attribute {
-    glm::vec3 position;
-    glm::vec3 normal;
-    glm::vec2 texture;
-  };
-
+  using Attribute = std::tuple<glm::vec3, glm::vec3, glm::vec2>;
   Mesh(const std::vector<GLuint> &indices, const std::vector<Attribute> &attributes);
 
   static Mesh FromObjFile(const std::string &file_path);
