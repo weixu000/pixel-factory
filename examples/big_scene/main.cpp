@@ -64,11 +64,12 @@ class Window : public GLContext {
     }
 
     auto light = PointLight();
-    light.color = glm::vec3(50.0f);
+    light.color = glm::vec3(10.0f);
     light.attenuation = 0.5f;
-    for (int i = 0; i < 2; ++i) {
-      for (int j = 0; j < 2; ++j) {
-        scene_.AddChild(Entity(glm::translate(glm::vec3(20 * i, 5.0f, 20 * j))))
+    light.fall_off = 7.0f;
+    for (int i = 0; i < 5; ++i) {
+      for (int j = 0; j < 5; ++j) {
+        scene_.AddChild(Entity(glm::translate(glm::vec3(4 * i, 4.0f, 4 * j))))
             ->AddComponent(PointLight(light));
       }
     }

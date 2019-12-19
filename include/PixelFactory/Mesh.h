@@ -8,13 +8,13 @@
 
 #include <PixelFactory/Component.h>
 #include <PixelFactory/PhongMaterial.h>
+#include <PixelFactory/ModelLoader.h>
 
 class GLVertexArray;
 
 class Mesh : public Component {
  public:
-  using Attribute = std::tuple<glm::vec3, glm::vec3, glm::vec2>;
-  Mesh(const std::vector<GLuint> &indices, const std::vector<Attribute> &attributes);
+  Mesh(const std::vector<GLuint> &indices, const std::vector<VertexNormalTex> &attributes);
 
   static Mesh FromObjFile(const std::string &file_path);
 

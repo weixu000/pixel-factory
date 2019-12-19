@@ -1,3 +1,5 @@
+#include <glm/gtx/transform.hpp>
+
 #include <PixelFactory/DeferredRenderer.h>
 #include <PixelFactory/GL/GLFramebuffer.h>
 #include <PixelFactory/GL/GLTexture2D.h>
@@ -19,7 +21,7 @@ DeferredRenderer::DeferredRenderer(int width, int height)
     : width_(width), height_(height) {
   if (geomtery_pass_shader == nullptr) {
     geomtery_pass_shader = std::make_unique<GLShader>("shaders/g_buffer.vert", "shaders/g_buffer.frag");
-    lighting_pass_shader = std::make_unique<GLShader>("shaders/quad.vert", "shaders/pointlight_phong.frag");
+    lighting_pass_shader = std::make_unique<GLShader>("shaders/flat.vert", "shaders/pointlight_phong.frag");
   }
 
   gbuffer_ = std::make_unique<GLFramebuffer>();
@@ -112,15 +114,41 @@ void DeferredRenderer::LightingPass(const DrawOptions &options) {
   lighting_pass_shader->SetUniform("gAlbedoSpec", 2);
   lighting_pass_shader->SetUniform("eye", options.camera.Eye());
 
+  lighting_pass_shader->SetUniform("projection", options.camera.Projection());
+  lighting_pass_shader->SetUniform("view", options.camera.View());
+
+  // Add effect of each light
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE);
   glBlendEquation(GL_FUNC_ADD);
+  glDisable(GL_DEPTH_TEST); // Render every light
+  // Render back faces of light volume so light is working when camera inside
+  glCullFace(GL_FRONT);
   for (auto &light:lights_) {
     lighting_pass_shader->SetUniform("light.position", light->GetEntity()->WorldTransform().Translation());
     lighting_pass_shader->SetUniform("light.color", light->color);
     lighting_pass_shader->SetUniform("light.attenuation", light->attenuation);
+    lighting_pass_shader->SetUniform("light.fallOff", light->fall_off);
 
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    lighting_pass_shader->SetUniform("world",
+                                     light->GetEntity()->WorldTransform().matrix
+                                         * glm::scale(glm::vec3(light->fall_off)));
+
+    PointLight::vao->Bind();
+    glDrawElements(GL_TRIANGLES, PointLight::count, GL_UNSIGNED_INT, nullptr);
+    PointLight::vao->Unbind();
   }
+  // Reset the states
+  glCullFace(GL_BACK);
+  glEnable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
+
+
+  // Copy depth buffer to default framebuffer for future use
+  gbuffer_->Bind(GLFramebuffer::Target::ReadFramebuffer);
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+  glBlitFramebuffer(0, 0, width_, height_,
+                    0, 0, width_, height_,
+                    GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

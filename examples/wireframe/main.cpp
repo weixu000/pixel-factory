@@ -41,6 +41,7 @@ public:
                      ->AddComponent(PointLight());
     light->color = glm::vec3(5.0f);
     light->attenuation = 0.2f;
+    light->fall_off = 10.0f;
 
     renderer_ = std::make_unique<DeferredRenderer>(Width(), Height());
     renderer_->Collect(scene_);

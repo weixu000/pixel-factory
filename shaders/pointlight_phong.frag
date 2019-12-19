@@ -8,6 +8,7 @@ struct Light {
     vec3 position;
     vec3 color;
     float attenuation;
+    float fallOff;
 };
 uniform Light light;
 uniform vec3 eye;
@@ -20,6 +21,10 @@ void main() {
     vec3 normal = texelFetch(gNormal, ivec2(gl_FragCoord.xy), 0).rgb;
     vec3 albedo = texelFetch(gAlbedoSpec, ivec2(gl_FragCoord.xy), 0).rgb;
     float spec = texelFetch(gAlbedoSpec, ivec2(gl_FragCoord.xy), 0).a;
+
+    if (length(light.position - fragPos) > light.fallOff) {
+        discard;
+    }
 
     vec3 viewDir = normalize(eye - fragPos);
     vec3 lightDir = normalize(light.position - fragPos);
