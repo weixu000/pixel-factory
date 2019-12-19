@@ -44,8 +44,21 @@ class Window : public GLContext {
     cam_obj->AddComponent(FreeMover());
     cam_obj->AddComponent(FreeRotator(camera_));
 
-    auto mesh = Mesh::FromObjFile("meshes/cube.obj");
+    auto quad = Mesh::FromObjFile("meshes/quad.obj");
     auto texture = std::make_shared<GLTexture2D>();
+    texture->Bind();
+    texture->Upload("textures/plain.png", 3);
+    texture->SetFilter(GL_LINEAR, GL_LINEAR);
+    quad.material_.diffuse = std::move(texture);
+    texture = std::make_shared<GLTexture2D>();
+    texture->Bind();
+    texture->Upload("textures/black.png", 1);
+    texture->SetFilter(GL_LINEAR, GL_LINEAR);
+    quad.material_.specular = std::move(texture);
+    scene_.AddChild(Entity(glm::scale(glm::vec3(25.0f))))->AddComponent(std::move(quad));
+
+    auto mesh = Mesh::FromObjFile("meshes/cube.obj");
+    texture = std::make_shared<GLTexture2D>();
     texture->Bind();
     texture->Upload("textures/container2.png", 3);
     texture->SetFilter(GL_LINEAR, GL_LINEAR);
@@ -56,9 +69,9 @@ class Window : public GLContext {
     texture->SetFilter(GL_LINEAR, GL_LINEAR);
     mesh.material_.specular = std::move(texture);
 
-    for (int i = 0; i < 10; ++i) {
-      for (int j = 0; j < 10; ++j) {
-        scene_.AddChild(Entity(glm::translate(glm::vec3(2 * i, 0.0f, 2 * j))))
+    for (int i = -5; i < 5; ++i) {
+      for (int j = -5; j < 5; ++j) {
+        scene_.AddChild(Entity(glm::translate(glm::vec3(2 * i, 0.5f, 2 * j))))
             ->AddComponent(Mesh(mesh));
       }
     }
@@ -66,10 +79,10 @@ class Window : public GLContext {
     auto light = PointLight();
     light.color = glm::vec3(10.0f);
     light.attenuation = 0.5f;
-    light.fall_off = 7.0f;
-    for (int i = 0; i < 5; ++i) {
-      for (int j = 0; j < 5; ++j) {
-        scene_.AddChild(Entity(glm::translate(glm::vec3(4 * i, 4.0f, 4 * j))))
+    light.fall_off = 8.0f;
+    for (int i = -1; i < 1; ++i) {
+      for (int j = -1; j < 1; ++j) {
+        scene_.AddChild(Entity(glm::translate(glm::vec3(6 * i, 4.0f, 6 * j))))
             ->AddComponent(PointLight(light));
       }
     }
