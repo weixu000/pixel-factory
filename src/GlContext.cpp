@@ -1,12 +1,12 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <PixelFactory/GL/GLContext.h>
 #include <PixelFactory/Event.h>
 #include <PixelFactory/EventHandler.h>
 #include <PixelFactory/Time.h>
+#include <PixelFactory/gl/GlContext.h>
 
-GLContext::GLContext(int width, int height, const std::string &title) {
+GlContext::GlContext(int width, int height, const std::string &title) {
   // Create the GLFW window.
   window_ = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
   // Check if the window_ could not be created.
@@ -39,18 +39,21 @@ GLContext::GLContext(int width, int height, const std::string &title) {
   handler_ = std::make_unique<EventHandler>();
 }
 
-void GLContext::SetupCallbacks() {
+void GlContext::SetupCallbacks() {
   // Set the key callback.
-  glfwSetKeyCallback(window_,
-                     [](GLFWwindow *window, int key, int scancode, int action, int mods) {
-                       KeyEvent e{{}, key, scancode, action, mods};
-                       switch (e.action) {
-                         case GLFW_PRESS:Retrieve(window)->handler_->ProcessEvent("KeyPress", e);
-                           break;
-                         case GLFW_RELEASE:Retrieve(window)->handler_->ProcessEvent("KeyRelease", e);
-                           break;
-                         default:break;
-                       }
+  glfwSetKeyCallback(window_, [](GLFWwindow *window, int key, int scancode,
+                                 int action, int mods) {
+    KeyEvent e{{}, key, scancode, action, mods};
+    switch (e.action) {
+    case GLFW_PRESS:
+      Retrieve(window)->handler_->ProcessEvent("KeyPress", e);
+      break;
+    case GLFW_RELEASE:
+      Retrieve(window)->handler_->ProcessEvent("KeyRelease", e);
+      break;
+    default:
+      break;
+    }
                      });
   // Set the window_ resize callback.
   glfwSetFramebufferSizeCallback(window_,
@@ -74,18 +77,17 @@ void GLContext::SetupCallbacks() {
   // Set the cursor position callback.
   glfwSetCursorPosCallback(window_,
                            [](GLFWwindow *window, double x, double y) {
-                             Retrieve(window)->handler_->ProcessEvent("MouseMove",
-                                                                      CursorPositionEvent{{}, float(x), float(y)});
-                           });
+                             Retrieve(window)->handler_->ProcessEvent("MouseMove", CursorPositionEvent{{}, float(x), float(y)});
+  });
 
   // Set the scroll callback.
-  glfwSetScrollCallback(window_,
-                        [](GLFWwindow *window, double xoffset, double yoffset) {
-                          Retrieve(window)->handler_->ProcessEvent("Scroll",
-                                                                   ScrollEvent{{}, float(xoffset), float(yoffset)});
-                        });
+  glfwSetScrollCallback(
+      window_, [](GLFWwindow *window, double xoffset, double yoffset) {
+        Retrieve(window)->handler_->ProcessEvent(
+            "Scroll", ScrollEvent{{}, float(xoffset), float(yoffset)});
+      });
 }
-void GLContext::Loop() {
+void GlContext::Loop() {
   Time::Reset();
   while (!glfwWindowShouldClose(window_)) {
     Time::Tick();

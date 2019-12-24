@@ -2,11 +2,11 @@
 
 #include <memory>
 
-class GLTexture2D;
+class GlTexture2D;
 
 struct PhongMaterial {
-  std::shared_ptr<GLTexture2D> diffuse;
-  std::shared_ptr<GLTexture2D> specular;
+  std::shared_ptr<GlTexture2D> diffuse;
+  std::shared_ptr<GlTexture2D> specular;
 };
 
 

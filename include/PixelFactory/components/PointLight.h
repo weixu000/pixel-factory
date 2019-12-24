@@ -6,7 +6,7 @@
 
 #include <PixelFactory/components/Component.h>
 
-class GLVertexArray;
+class GlVertexArray;
 
 struct PointLight : public Component {
   glm::vec3 color;
@@ -15,6 +15,6 @@ struct PointLight : public Component {
 
   PointLight();
 
-  static inline std::unique_ptr<GLVertexArray> vao;
+  static inline std::unique_ptr<GlVertexArray> vao;
   static inline GLuint count;
 };

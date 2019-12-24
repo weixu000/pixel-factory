@@ -7,17 +7,17 @@
 
 class EventHandler;
 
-class GLContext {
+class GlContext {
  public:
-  GLContext(int width, int height, const std::string &title);
+  GlContext(int width, int height, const std::string &title);
 
-  virtual ~GLContext() {
+  virtual ~GlContext() {
     glfwDestroyWindow(window_);
   }
 
-  GLContext(const GLContext &) = delete;
+  GlContext(const GlContext &) = delete;
 
-  GLContext &operator=(const GLContext &) = delete;
+  GlContext &operator=(const GlContext &) = delete;
 
   [[nodiscard]] int Width() const { return std::get<0>(FramebufferSize()); }
 
@@ -28,7 +28,7 @@ class GLContext {
  protected:
   GLFWwindow *window_;
 
-  static GLContext *Retrieve(GLFWwindow *w) { return reinterpret_cast<GLContext *>(glfwGetWindowUserPointer(w)); }
+  static GlContext *Retrieve(GLFWwindow *w) { return reinterpret_cast<GlContext *>(glfwGetWindowUserPointer(w)); }
 
   [[nodiscard]] std::tuple<int, int> FramebufferSize() const {
     int width, height;

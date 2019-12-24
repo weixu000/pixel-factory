@@ -1,63 +1,51 @@
 #include <glm/gtx/transform.hpp>
 
 #include <PixelFactory/renderer/DeferredRenderer.h>
-#include <PixelFactory/GL/GLFramebuffer.h>
-#include <PixelFactory/GL/GLTexture2D.h>
-#include <PixelFactory/GL/GLRenderbuffer.h>
-#include <PixelFactory/GL/GLVertexArray.h>
+#include <PixelFactory/gl/GlFramebuffer.h>
+#include <PixelFactory/gl/GlTexture2D.h>
+#include <PixelFactory/gl/GlRenderbuffer.h>
+#include <PixelFactory/gl/GlVertexArray.h>
 #include <PixelFactory/Entity.h>
 #include <PixelFactory/components/Mesh.h>
-#include <PixelFactory/GL/GLShader.h>
+#include <PixelFactory/gl/GlShader.h>
 #include <PixelFactory/renderer/DrawOptions.h>
 #include <PixelFactory/components/Camera.h>
 #include <PixelFactory/components/PointLight.h>
 
 namespace {
-std::unique_ptr<GLShader> geomtery_pass_shader;
-std::unique_ptr<GLShader> lighting_pass_shader;
+std::unique_ptr<GlShader> geomtery_pass_shader;
+std::unique_ptr<GlShader> lighting_pass_shader;
 }
 
 DeferredRenderer::DeferredRenderer(int width, int height)
     : width_(width), height_(height) {
   if (geomtery_pass_shader == nullptr) {
-    geomtery_pass_shader = std::make_unique<GLShader>("shaders/g_buffer.vert", "shaders/g_buffer.frag");
-    lighting_pass_shader = std::make_unique<GLShader>("shaders/flat.vert", "shaders/pointlight_phong.frag");
+    geomtery_pass_shader = std::make_unique<GlShader>("shaders/g_buffer.vert", "shaders/g_buffer.frag");
+    lighting_pass_shader = std::make_unique<GlShader>("shaders/flat.vert", "shaders/pointlight_phong.frag");
   }
 
-  gbuffer_ = std::make_unique<GLFramebuffer>();
-  gbuffer_->Bind();
+  gbuffer_ = std::make_unique<GlFramebuffer>();
 
-  position_ = std::make_unique<GLTexture2D>();
-  position_->Bind();
-  position_->Allocate(0, GL_RGB16F, width, height, GL_RGB, GL_FLOAT);
+  position_ = std::make_unique<GlTexture2D>(1, GL_RGB16F, width, height);
   position_->SetFilter(GL_NEAREST, GL_NEAREST);
   gbuffer_->Attach(GL_COLOR_ATTACHMENT0, *position_);
 
-  normal_ = std::make_unique<GLTexture2D>();
-  normal_->Bind();
-  normal_->Allocate(0, GL_RGB16F, width, height, GL_RGB, GL_FLOAT);
+  normal_ = std::make_unique<GlTexture2D>(1, GL_RGB16F, width, height);
   normal_->SetFilter(GL_NEAREST, GL_NEAREST);
   gbuffer_->Attach(GL_COLOR_ATTACHMENT1, *normal_);
 
-  albedo_spec_ = std::make_unique<GLTexture2D>();
-  albedo_spec_->Bind();
-  albedo_spec_->Allocate(0, GL_RGBA, width, height, GL_RGBA, GL_UNSIGNED_BYTE);
+  albedo_spec_ = std::make_unique<GlTexture2D>(1, GL_RGBA8, width, height);
   albedo_spec_->SetFilter(GL_NEAREST, GL_NEAREST);
   gbuffer_->Attach(GL_COLOR_ATTACHMENT2, *albedo_spec_);
 
-  std::array<GLenum, 3> attachments = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
-  glDrawBuffers(attachments.size(), attachments.data());
+  gbuffer_->DrawBuffers({GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2});
 
-  depth_ = std::make_unique<GLRenderbuffer>();
-  depth_->Bind();
-  depth_->Allocate(GL_DEPTH_COMPONENT24, width, height);
+  depth_ = std::make_unique<GlRenderbuffer>(GL_DEPTH_COMPONENT24, width, height);
   gbuffer_->Attach(GL_DEPTH_ATTACHMENT, *depth_);
 
   if (!gbuffer_->IsComplete()) {
     std::runtime_error("GBuffer not complete");
   }
-
-  gbuffer_->Unbind();
 }
 
 void DeferredRenderer::Collect(const Entity &scene) {
@@ -143,12 +131,18 @@ void DeferredRenderer::LightingPass(const DrawOptions &options) {
   glEnable(GL_DEPTH_TEST);
   glDisable(GL_BLEND);
 
-
   // Copy depth buffer to default framebuffer for future use
-  gbuffer_->Bind(GLFramebuffer::Target::ReadFramebuffer);
-  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-  glBlitFramebuffer(0, 0, width_, height_,
-                    0, 0, width_, height_,
-                    GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glBlitNamedFramebuffer(gbuffer_->Id(), 0,
+                         0, 0, width_, height_,
+                         0, 0, width_, width_,
+                         GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+}
+
+void DeferredRenderer::DrawGBuffer(GLenum mode) {
+  gbuffer_->ReadBuffer(mode);
+
+  glBlitNamedFramebuffer(gbuffer_->Id(), 0,
+                         0, 0, width_, height_,
+                         0, 0, width_, width_,
+                         GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }

@@ -1,4 +1,4 @@
-#version 430
+#version 450
 
 const vec2 quadVertices[4] = { vec2(-1.0, -1.0), vec2(1.0, -1.0), vec2(-1.0, 1.0), vec2(1.0, 1.0) };
 

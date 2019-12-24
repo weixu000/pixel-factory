@@ -3,7 +3,7 @@ Trying to implement a game engine...
 ## TODO
 - GLFW window setup
     - [x] Event system
-    - [ ] Split GLContext and Window
+    - [ ] Split GlContext and Window
     - [ ] Application class
 - OpenGL objects wrappers
     - [ ] Handle global states

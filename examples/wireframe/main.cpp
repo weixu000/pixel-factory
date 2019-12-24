@@ -1,24 +1,24 @@
 #include <glm/gtx/transform.hpp>
 #include <iostream>
 
-#include <PixelFactory/Camera.h>
-#include <PixelFactory/DeferredRenderer.h>
-#include <PixelFactory/DrawOptions.h>
 #include <PixelFactory/Entity.h>
 #include <PixelFactory/Event.h>
 #include <PixelFactory/EventHandler.h>
-#include <PixelFactory/GL/GLContext.h>
-#include <PixelFactory/GL/GLFramebuffer.h>
-#include <PixelFactory/GL/GLRenderbuffer.h>
-#include <PixelFactory/GL/GLTexture2D.h>
-#include <PixelFactory/GL/GLVertexArray.h>
-#include <PixelFactory/Mesh.h>
-#include <PixelFactory/PointLight.h>
-#include <PixelFactory/Trackball.h>
+#include <PixelFactory/components/Camera.h>
+#include <PixelFactory/components/Mesh.h>
+#include <PixelFactory/components/PointLight.h>
+#include <PixelFactory/components/Trackball.h>
+#include <PixelFactory/gl/GlContext.h>
+#include <PixelFactory/gl/GlFramebuffer.h>
+#include <PixelFactory/gl/GlRenderbuffer.h>
+#include <PixelFactory/gl/GlTexture2D.h>
+#include <PixelFactory/gl/GlVertexArray.h>
+#include <PixelFactory/renderer/DeferredRenderer.h>
+#include <PixelFactory/renderer/DrawOptions.h>
 
-class Window : public GLContext {
+class Window : public GlContext {
 public:
-  Window() : GLContext(800, 600, "Empty Window") {
+  Window() : GlContext(800, 600, "Empty Window") {
     scene_.SetEventHandler(handler_.get());
     camera_ =
         scene_.AddChild(Entity(glm::translate(glm::vec3(0.0f, 0.0f, 20.0f))))
@@ -26,14 +26,14 @@ public:
     auto axes = scene_.AddChild(Entity());
     axes->AddComponent(Trackball(camera_));
     auto mesh = axes->AddComponent(Mesh::FromObjFile("meshes/cube.obj"));
-    auto texture = std::make_shared<GLTexture2D>();
+    auto texture = std::make_shared<GlTexture2D>(
+        GlTexture2D::FromImageFile("textures/container2.png", 3));
     texture->Bind();
-    texture->Upload("textures/container2.png", 3);
     texture->SetFilter(GL_LINEAR, GL_LINEAR);
     mesh->material_.diffuse = std::move(texture);
-    texture = std::make_shared<GLTexture2D>();
+    texture = std::make_shared<GlTexture2D>(
+        GlTexture2D::FromImageFile("textures/container2_specular.png", 1));
     texture->Bind();
-    texture->Upload("textures/container2_specular.png", 1);
     texture->SetFilter(GL_LINEAR, GL_LINEAR);
     mesh->material_.specular = std::move(texture);
 

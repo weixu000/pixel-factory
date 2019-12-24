@@ -2,8 +2,8 @@
 
 #include <PixelFactory/components/PointLight.h>
 #include <PixelFactory/ModelLoader.h>
-#include <PixelFactory/GL/GLVertexArray.h>
-#include <PixelFactory/GL/GLBuffer.h>
+#include <PixelFactory/gl/GlVertexArray.h>
+#include <PixelFactory/gl/GlBuffer.h>
 
 PointLight::PointLight() {
   if (vao == nullptr) {
@@ -11,20 +11,13 @@ PointLight::PointLight() {
 
     count = indices.size();
 
-    vao = std::make_unique<GLVertexArray>();
-    vao->Bind();
-    GLBuffer vbo, ebo;
+    vao = std::make_unique<GlVertexArray>();
 
-    vbo.Bind(GLBuffer::Target::ArrayBuffer);
-    vbo.Upload(sizeof(Vertex) * attributes.size(), attributes.data());
-    vao->SetAttribPointer<Vertex>();
-    vbo.Unbind();
+    GlBuffer vbo(sizeof(Vertex) * attributes.size(), attributes.data());
+    GlBuffer ebo(sizeof(GLuint) * indices.size(), indices.data());
 
-    ebo.Bind(GLBuffer::Target::ElementArrayBuffer);
-    // Pass in the data.
-    ebo.Upload(sizeof(GLuint) * indices.size(), indices.data());
-
-    // Unbind from the VAO.
-    vao->Unbind();
+    vao->BindVertexBuffer(0, vbo, 0, sizeof(Vertex));
+    vao->SetAttribFormat<Vertex>(0);
+    vao->BindElementBuffer(ebo);
   }
 }

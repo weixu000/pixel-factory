@@ -2,10 +2,11 @@
 
 #include <memory>
 #include <list>
+#include <glad/glad.h>
 
-class GLTexture2D;
-class GLRenderbuffer;
-class GLFramebuffer;
+class GlTexture2D;
+class GlRenderbuffer;
+class GlFramebuffer;
 class Entity;
 class Mesh;
 class PointLight;
@@ -21,12 +22,21 @@ class DeferredRenderer {
 
   void LightingPass(const DrawOptions &options);
 
-  std::unique_ptr<GLTexture2D> position_, normal_, albedo_spec_;
-  std::unique_ptr<GLRenderbuffer> depth_;
-  std::unique_ptr<GLFramebuffer> gbuffer_;
+  void DrawPositonMap() { DrawGBuffer(GL_COLOR_ATTACHMENT0); }
+
+  void DrawNormalMap() { DrawGBuffer(GL_COLOR_ATTACHMENT1); }
+
+  void DrawAlbedoSpecMap() { DrawGBuffer(GL_COLOR_ATTACHMENT2); }
+
+ private:
+  std::unique_ptr<GlTexture2D> position_, normal_, albedo_spec_;
+  std::unique_ptr<GlRenderbuffer> depth_;
+  std::unique_ptr<GlFramebuffer> gbuffer_;
 
   std::list<const Mesh *> meshes_;
   std::list<const PointLight *> lights_;
 
   const int width_, height_;
+
+  void DrawGBuffer(GLenum mode);
 };

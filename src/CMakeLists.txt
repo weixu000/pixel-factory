@@ -3,15 +3,15 @@ add_library(PixelFactory STATIC
         ../include/PixelFactory/EventHandler.h
         Time.cpp ../include/PixelFactory/Time.h
         ModelLoader.cpp ../include/PixelFactory/ModelLoader.h
-        GLContext.cpp ../include/PixelFactory/GL/GLContext.h
-        ../include/PixelFactory/GL/GLBuffer.h
-        ../include/PixelFactory/GL/GLVertexArray.h
-        ../include/PixelFactory/GL/GLUniform.h
-        GLShader.cpp ../include/PixelFactory/GL/GLShader.h
-        ../include/PixelFactory/GL/GLFramebuffer.h
-        ../include/PixelFactory/GL/GLRenderbuffer.h
-        ../include/PixelFactory/GL/GLTexture.h
-        ../include/PixelFactory/GL/GLTexture2D.h
+        GLContext.cpp ../include/PixelFactory/gl/GlContext.h
+        ../include/PixelFactory/gl/GlBuffer.h
+        ../include/PixelFactory/gl/GlVertexArray.h
+        ../include/PixelFactory/gl/Uniform.h
+        GLShader.cpp ../include/PixelFactory/gl/GlShader.h
+        ../include/PixelFactory/gl/GlFramebuffer.h
+        ../include/PixelFactory/gl/GlRenderbuffer.h
+        ../include/PixelFactory/gl/GlTexture.h
+        ../include/PixelFactory/gl/GlTexture2D.h
         DeferredRenderer.cpp ../include/PixelFactory/renderer/DeferredRenderer.h
         ../include/PixelFactory/renderer/PhongMaterial.h
         ../include/PixelFactory/renderer/DrawOptions.h

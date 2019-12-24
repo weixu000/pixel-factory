@@ -10,7 +10,7 @@
 #include <PixelFactory/renderer/PhongMaterial.h>
 #include <PixelFactory/ModelLoader.h>
 
-class GLVertexArray;
+class GlVertexArray;
 
 class Mesh : public Component {
  public:
@@ -20,7 +20,7 @@ class Mesh : public Component {
 
   PhongMaterial material_;
   const GLsizei count_;
-  std::shared_ptr<GLVertexArray> vao_;
+  std::shared_ptr<GlVertexArray> vao_;
 };
 
 

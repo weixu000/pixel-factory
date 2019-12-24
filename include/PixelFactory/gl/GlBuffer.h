@@ -2,7 +2,7 @@
 
 #include <glad/glad.h>
 
-class GLBuffer {
+class GlBuffer {
  public:
   enum class Target : GLenum {
     Unbound = 0U,
@@ -10,17 +10,28 @@ class GLBuffer {
     ElementArrayBuffer = GL_ELEMENT_ARRAY_BUFFER
   };
 
-  GLBuffer() {
-    glGenBuffers(1, &id_);
+  GlBuffer(GLsizeiptr size, const void *data, GLbitfield flags = 0) {
+    glCreateBuffers(1, &id_);
+    glNamedBufferStorage(id_, size, data, flags);
   }
 
-  ~GLBuffer() {
+  GlBuffer(GlBuffer &&other) noexcept: id_(other.id_) {
+    other.id_ = 0U;
+  }
+
+  ~GlBuffer() {
     glDeleteBuffers(1, &id_);
   }
 
-  void Upload(GLsizeiptr size, const void *data, GLenum usage = GL_STATIC_DRAW) {
-    glBufferData(static_cast<GLenum>(target_), size, data, usage);
+  GlBuffer &operator=(GlBuffer &&other) noexcept {
+    assert(this != &other);
+    glDeleteBuffers(1, &id_);
+    id_ = other.id_;
+    other.id_ = 0U;
+    return *this;
   }
+
+  [[nodiscard]] GLuint Id() const { return id_; }
 
   void Bind(Target target) {
     target_ = target;

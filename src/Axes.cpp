@@ -3,16 +3,16 @@
 #include <glm/gtx/euler_angles.hpp>
 
 #include <PixelFactory/components/Axes.h>
-#include <PixelFactory/GL/GLBuffer.h>
-#include <PixelFactory/GL/GLVertexArray.h>
+#include <PixelFactory/gl/GlBuffer.h>
+#include <PixelFactory/gl/GlVertexArray.h>
 #include <PixelFactory/renderer/DrawOptions.h>
 #include <PixelFactory/components/Camera.h>
-#include <PixelFactory/GL/GLShader.h>
+#include <PixelFactory/gl/GlShader.h>
 #include <PixelFactory/Entity.h>
 
 namespace {
-std::unique_ptr<GLVertexArray> vao_;
-std::unique_ptr<GLShader> shader_;
+std::unique_ptr<GlVertexArray> vao_;
+std::unique_ptr<GlShader> shader_;
 }
 
 Axes::Axes() {
@@ -22,19 +22,13 @@ Axes::Axes() {
         glm::vec3(1.0f, 0.0f, 0.0f),
     };
 
-    vao_ = std::make_unique<GLVertexArray>();
-    vao_->Bind();
+    vao_ = std::make_unique<GlVertexArray>();
+    GlBuffer vbo(sizeof(glm::vec3) * vertices.size(), vertices.data());
+    vao_->BindVertexBuffer(0, vbo, 0, sizeof(glm::vec3));
+    vao_->SetAttribFormat<glm::vec3>(0, 0);
+    vao_->AssociateAttrib(0, 0);
 
-    GLBuffer vbo;
-    vbo.Bind(GLBuffer::Target::ArrayBuffer);
-    vbo.Upload(sizeof(glm::vec3) * vertices.size(), vertices.data());
-
-    vao_->SetAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3));
-
-    vbo.Unbind();
-    vao_->Unbind();
-
-    shader_ = std::make_unique<GLShader>("shaders/flat.vert", "shaders/flat.frag");
+    shader_ = std::make_unique<GlShader>("shaders/flat.vert", "shaders/flat.frag");
   }
 }
 

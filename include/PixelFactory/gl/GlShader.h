@@ -4,16 +4,16 @@
 #include <unordered_map>
 #include <glad/glad.h>
 
-#include <PixelFactory/GL/GLUniform.h>
+#include <PixelFactory/gl/Uniform.h>
 
-class GLShader {
+class GlShader {
  public:
-  GLShader() : id_(glCreateProgram()) {}
+  GlShader() : id_(glCreateProgram()) {}
 
-  GLShader(const std::string &vertex_file_path, const std::string &fragment_file_path,
+  GlShader(const std::string &vertex_file_path, const std::string &fragment_file_path,
            const std::string &geometry_file_path = "");
 
-  ~GLShader() { glDeleteProgram(id_); }
+  ~GlShader() { glDeleteProgram(id_); }
 
   void Use() { glUseProgram(id_); }
 

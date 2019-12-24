@@ -1,23 +1,23 @@
 #include <iostream>
 #include <glm/gtx/transform.hpp>
 
-#include <PixelFactory/GL/GLContext.h>
+#include <PixelFactory/gl/GlContext.h>
 #include <PixelFactory/Entity.h>
 #include <PixelFactory/components/Camera.h>
 #include <PixelFactory/components/Mesh.h>
 #include <PixelFactory/components/FreeMover.h>
 #include <PixelFactory/components/FreeRotator.h>
 #include <PixelFactory/renderer/DrawOptions.h>
-#include <PixelFactory/GL/GLVertexArray.h>
+#include <PixelFactory/gl/GlVertexArray.h>
 #include <PixelFactory/EventHandler.h>
 #include <PixelFactory/Event.h>
 #include <PixelFactory/renderer/DeferredRenderer.h>
-#include <PixelFactory/GL/GLFramebuffer.h>
+#include <PixelFactory/gl/GlFramebuffer.h>
 #include <PixelFactory/components/PointLight.h>
 
-class Window : public GLContext {
+class Window : public GlContext {
  public:
-  Window() : GLContext(800, 600, "Mesh Viewer") {
+  Window() : GlContext(800, 600, "Mesh Viewer") {
     handler_->Bind<ResizeEvent>("Resize", [this](const ResizeEvent &e) { OnResize(e); });
     scene_.SetEventHandler(handler_.get());
 
@@ -45,27 +45,19 @@ class Window : public GLContext {
     cam_obj->AddComponent(FreeRotator(camera_));
 
     auto quad = Mesh::FromObjFile("meshes/quad.obj");
-    auto texture = std::make_shared<GLTexture2D>();
-    texture->Bind();
-    texture->Upload("textures/plain.png", 3);
+    auto texture = std::make_shared<GlTexture2D>(GlTexture2D::FromImageFile("textures/plain.png", 3));
     texture->SetFilter(GL_LINEAR, GL_LINEAR);
     quad.material_.diffuse = std::move(texture);
-    texture = std::make_shared<GLTexture2D>();
-    texture->Bind();
-    texture->Upload("textures/black.png", 1);
+    texture = std::make_shared<GlTexture2D>(GlTexture2D::FromImageFile("textures/black.png", 1));
     texture->SetFilter(GL_LINEAR, GL_LINEAR);
     quad.material_.specular = std::move(texture);
     scene_.AddChild(Entity(glm::scale(glm::vec3(25.0f))))->AddComponent(std::move(quad));
 
     auto mesh = Mesh::FromObjFile("meshes/cube.obj");
-    texture = std::make_shared<GLTexture2D>();
-    texture->Bind();
-    texture->Upload("textures/container2.png", 3);
+    texture = std::make_shared<GlTexture2D>(GlTexture2D::FromImageFile("textures/container2.png", 3));
     texture->SetFilter(GL_LINEAR, GL_LINEAR);
     mesh.material_.diffuse = std::move(texture);
-    texture = std::make_shared<GLTexture2D>();
-    texture->Bind();
-    texture->Upload("textures/container2_specular.png", 1);
+    texture = std::make_shared<GlTexture2D>(GlTexture2D::FromImageFile("textures/container2_specular.png", 1));
     texture->SetFilter(GL_LINEAR, GL_LINEAR);
     mesh.material_.specular = std::move(texture);
 

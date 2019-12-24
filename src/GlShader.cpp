@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <PixelFactory/GL/GLShader.h>
+#include <PixelFactory/gl/GlShader.h>
 
 namespace {
 enum class ShaderType : GLenum {
@@ -52,7 +52,7 @@ GLuint LoadSingleShader(const std::string &shader_file_path, ShaderType type) {
 }
 }
 
-void GLShader::CompileProgram(const std::string &vertex_file_path,
+void GlShader::CompileProgram(const std::string &vertex_file_path,
                               const std::string &fragment_file_path,
                               const std::string &geometry_file_path) {
 // Create the vertex shader and fragment shader.
@@ -93,10 +93,10 @@ void GLShader::CompileProgram(const std::string &vertex_file_path,
   if (geometry_id) glDeleteShader(geometry_id);
 }
 
-GLShader::GLShader(const std::string &vertex_file_path,
+GlShader::GlShader(const std::string &vertex_file_path,
                    const std::string &fragment_file_path,
                    const std::string &geometry_file_path)
-    : GLShader() {
+    : GlShader() {
   CompileProgram(vertex_file_path, fragment_file_path, geometry_file_path);
 
   GLint count;
