@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include <PixelFactory/Component.h>
+#include <PixelFactory/components/Component.h>
 
 class UpdateEvent;
 class KeyEvent;

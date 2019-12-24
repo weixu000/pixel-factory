@@ -3,17 +3,17 @@
 
 #include <PixelFactory/GL/GLContext.h>
 #include <PixelFactory/Entity.h>
-#include <PixelFactory/Camera.h>
-#include <PixelFactory/Mesh.h>
-#include <PixelFactory/FreeMover.h>
-#include <PixelFactory/FreeRotator.h>
-#include <PixelFactory/DrawOptions.h>
+#include <PixelFactory/components/Camera.h>
+#include <PixelFactory/components/Mesh.h>
+#include <PixelFactory/components/FreeMover.h>
+#include <PixelFactory/components/FreeRotator.h>
+#include <PixelFactory/renderer/DrawOptions.h>
 #include <PixelFactory/GL/GLVertexArray.h>
 #include <PixelFactory/EventHandler.h>
 #include <PixelFactory/Event.h>
-#include <PixelFactory/DeferredRenderer.h>
+#include <PixelFactory/renderer/DeferredRenderer.h>
 #include <PixelFactory/GL/GLFramebuffer.h>
-#include <PixelFactory/PointLight.h>
+#include <PixelFactory/components/PointLight.h>
 
 class Window : public GLContext {
  public:

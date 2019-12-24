@@ -2,7 +2,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtx/transform.hpp>
 
-#include <PixelFactory/FreeMover.h>
+#include <PixelFactory/components/FreeMover.h>
 #include <PixelFactory/Event.h>
 #include <PixelFactory/Entity.h>
 #include <PixelFactory/EventHandler.h>

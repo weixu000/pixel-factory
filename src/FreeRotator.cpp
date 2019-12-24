@@ -3,10 +3,10 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
-#include <PixelFactory/FreeRotator.h>
+#include <PixelFactory/components/FreeRotator.h>
 #include <PixelFactory/Event.h>
 #include <PixelFactory/Entity.h>
-#include <PixelFactory/Camera.h>
+#include <PixelFactory/components/Camera.h>
 #include <PixelFactory/EventHandler.h>
 
 void FreeRotator::Start() {

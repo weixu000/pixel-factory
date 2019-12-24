@@ -4,7 +4,7 @@
 #include <list>
 
 #include <PixelFactory/Transform.h>
-#include <PixelFactory/Component.h>
+#include <PixelFactory/components/Component.h>
 
 class ResizeEvent;
 class KeyEvent;

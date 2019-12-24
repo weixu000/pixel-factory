@@ -2,11 +2,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
-#include <PixelFactory/Axes.h>
+#include <PixelFactory/components/Axes.h>
 #include <PixelFactory/GL/GLBuffer.h>
 #include <PixelFactory/GL/GLVertexArray.h>
-#include <PixelFactory/DrawOptions.h>
-#include <PixelFactory/Camera.h>
+#include <PixelFactory/renderer/DrawOptions.h>
+#include <PixelFactory/components/Camera.h>
 #include <PixelFactory/GL/GLShader.h>
 #include <PixelFactory/Entity.h>
 

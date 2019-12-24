@@ -1,6 +1,6 @@
 #include <glm/gtx/transform.hpp>
 
-#include <PixelFactory/Camera.h>
+#include <PixelFactory/components/Camera.h>
 #include <PixelFactory/Entity.h>
 #include <PixelFactory/Event.h>
 #include <PixelFactory/EventHandler.h>

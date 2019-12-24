@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <PixelFactory/Component.h>
+#include <PixelFactory/components/Component.h>
 
 class Axes : public Component {
  public:

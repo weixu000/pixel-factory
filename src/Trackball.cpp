@@ -2,10 +2,10 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtx/transform.hpp>
 
-#include <PixelFactory/Trackball.h>
+#include <PixelFactory/components/Trackball.h>
 #include <PixelFactory/Event.h>
 #include <PixelFactory/Entity.h>
-#include <PixelFactory/Camera.h>
+#include <PixelFactory/components/Camera.h>
 #include <PixelFactory/EventHandler.h>
 
 void Trackball::Start() {

@@ -1,4 +1,4 @@
-#include <PixelFactory/Mesh.h>
+#include <PixelFactory/components/Mesh.h>
 #include <PixelFactory/GL/GLVertexArray.h>
 #include <PixelFactory/GL/GLBuffer.h>
 #include <PixelFactory/Entity.h>

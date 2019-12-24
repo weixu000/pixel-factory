@@ -1,16 +1,16 @@
 #include <glm/gtx/transform.hpp>
 
-#include <PixelFactory/DeferredRenderer.h>
+#include <PixelFactory/renderer/DeferredRenderer.h>
 #include <PixelFactory/GL/GLFramebuffer.h>
 #include <PixelFactory/GL/GLTexture2D.h>
 #include <PixelFactory/GL/GLRenderbuffer.h>
 #include <PixelFactory/GL/GLVertexArray.h>
 #include <PixelFactory/Entity.h>
-#include <PixelFactory/Mesh.h>
+#include <PixelFactory/components/Mesh.h>
 #include <PixelFactory/GL/GLShader.h>
-#include <PixelFactory/DrawOptions.h>
-#include <PixelFactory/Camera.h>
-#include <PixelFactory/PointLight.h>
+#include <PixelFactory/renderer/DrawOptions.h>
+#include <PixelFactory/components/Camera.h>
+#include <PixelFactory/components/PointLight.h>
 
 namespace {
 std::unique_ptr<GLShader> geomtery_pass_shader;

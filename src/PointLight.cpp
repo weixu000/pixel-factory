@@ -1,6 +1,6 @@
 
 
-#include <PixelFactory/PointLight.h>
+#include <PixelFactory/components/PointLight.h>
 #include <PixelFactory/ModelLoader.h>
 #include <PixelFactory/GL/GLVertexArray.h>
 #include <PixelFactory/GL/GLBuffer.h>

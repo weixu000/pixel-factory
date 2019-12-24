@@ -6,8 +6,8 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-#include <PixelFactory/Component.h>
-#include <PixelFactory/PhongMaterial.h>
+#include <PixelFactory/components/Component.h>
+#include <PixelFactory/renderer/PhongMaterial.h>
 #include <PixelFactory/ModelLoader.h>
 
 class GLVertexArray;

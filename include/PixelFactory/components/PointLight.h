@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-#include <PixelFactory/Component.h>
+#include <PixelFactory/components/Component.h>
 
 class GLVertexArray;
 
