@@ -2,8 +2,6 @@
 
 #include <PixelFactory/renderer/DeferredRenderer.h>
 #include <PixelFactory/gl/GlFramebuffer.h>
-#include <PixelFactory/gl/GlTexture2D.h>
-#include <PixelFactory/gl/GlRenderbuffer.h>
 #include <PixelFactory/gl/GlVertexArray.h>
 #include <PixelFactory/Entity.h>
 #include <PixelFactory/components/Mesh.h>
@@ -15,6 +13,7 @@
 namespace {
 std::unique_ptr<GlShader> geomtery_pass_shader;
 std::unique_ptr<GlShader> lighting_pass_shader;
+std::unique_ptr<GlShader> shadow_pass_shader;
 }
 
 DeferredRenderer::DeferredRenderer(int width, int height)
@@ -22,6 +21,8 @@ DeferredRenderer::DeferredRenderer(int width, int height)
   if (geomtery_pass_shader == nullptr) {
     geomtery_pass_shader = std::make_unique<GlShader>("shaders/g_buffer.vert", "shaders/g_buffer.frag");
     lighting_pass_shader = std::make_unique<GlShader>("shaders/flat.vert", "shaders/pointlight_phong.frag");
+    shadow_pass_shader =
+        std::make_unique<GlShader>("shaders/shadow_map.vert", "shaders/shadow_map.frag", "shaders/shadow_map.geom");
   }
 
   gbuffer_ = std::make_unique<GlFramebuffer>();
@@ -46,6 +47,10 @@ DeferredRenderer::DeferredRenderer(int width, int height)
   if (!gbuffer_->IsComplete()) {
     std::runtime_error("GBuffer not complete");
   }
+
+  shadow_ = std::make_unique<GlFramebuffer>();
+  shadow_->ReadBuffer(GL_NONE);
+  shadow_->DrawBuffers({GL_NONE});
 }
 
 void DeferredRenderer::Collect(const Entity &scene) {
@@ -122,6 +127,10 @@ void DeferredRenderer::LightingPass(const DrawOptions &options) {
                                      light->GetEntity()->WorldTransform().matrix
                                          * glm::scale(glm::vec3(light->fall_off)));
 
+    glActiveTexture(GL_TEXTURE3);
+    light->shadow_map->Bind();
+    lighting_pass_shader->SetUniform("shadowMap", 3);
+
     PointLight::vao->Bind();
     glDrawElements(GL_TRIANGLES, PointLight::count, GL_UNSIGNED_INT, nullptr);
     PointLight::vao->Unbind();
@@ -136,6 +145,44 @@ void DeferredRenderer::LightingPass(const DrawOptions &options) {
                          0, 0, width_, height_,
                          0, 0, width_, width_,
                          GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+}
+
+void DeferredRenderer::ShadowPass() {
+  shadow_->Bind();
+  shadow_pass_shader->Use();
+
+  for (auto &light:lights_) {
+    shadow_->Attach(GL_DEPTH_ATTACHMENT, *light->shadow_map);
+
+    if (!shadow_->IsComplete()) {
+      throw std::runtime_error("Shadow FBO not complete");
+    }
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    glViewport(0, 0, light->shadow_map->size_, light->shadow_map->size_);
+
+    auto light_translation = glm::translate(-light->GetEntity()->WorldTransform().Translation());
+    std::array<glm::mat4, 6> light_views{};
+    for (int face = 0; face < 6; ++face) {
+      light_views[face] = PointLight::shadow_view[face] * light_translation;
+    }
+    shadow_pass_shader->SetUniform("lightView[0]", light_views);
+    shadow_pass_shader->SetUniform("lightProj", PointLight::shadow_projection);
+    shadow_pass_shader->SetUniform("fallOff", light->fall_off);
+
+    for (auto &mesh:meshes_) {
+      shadow_pass_shader->SetUniform("world", mesh->GetEntity()->WorldTransform().matrix);
+
+      mesh->vao_->Bind();
+      glDrawElements(GL_TRIANGLES, mesh->count_, GL_UNSIGNED_INT, nullptr);
+      mesh->vao_->Unbind();
+    }
+  }
+
+  shadow_->Unbind();
+
+  glViewport(0, 0, width_, height_);
 }
 
 void DeferredRenderer::DrawGBuffer(GLenum mode) {

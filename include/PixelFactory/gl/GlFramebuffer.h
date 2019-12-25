@@ -3,8 +3,9 @@
 #include <initializer_list>
 #include <glad/glad.h>
 
-#include <PixelFactory/gl/GlTexture2D.h>
 #include <PixelFactory/gl/GlRenderbuffer.h>
+#include <PixelFactory/gl/GlTexture2D.h>
+#include <PixelFactory/gl/GlTextureCubemap.h>
 
 class GlFramebuffer {
  public:
@@ -56,11 +57,17 @@ class GlFramebuffer {
                                    renderbuffer.Id());
   }
 
+  void Attach(GLenum attachment, const GlTextureCubemap &texture, GLint level = 0) {
+    glNamedFramebufferTexture(id_, attachment, texture.Id(), level);
+  }
+
+  void ReadBuffer(GLenum mode) {
+    glNamedFramebufferReadBuffer(id_, mode);
+  }
+
   void DrawBuffers(std::initializer_list<GLenum> bufs) {
     glNamedFramebufferDrawBuffers(id_, bufs.size(), bufs.begin());
   }
-
-  void ReadBuffer(GLenum mode) { glNamedFramebufferReadBuffer(id_, mode); }
 
   bool IsComplete(Target target = Target::Framebuffer) {
     return glCheckNamedFramebufferStatus(id_, static_cast<GLenum>(target_)) ==

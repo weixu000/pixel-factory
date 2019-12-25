@@ -15,6 +15,14 @@ uniform vec3 eye;
 
 out vec4 fragColor;
 
+uniform samplerCube shadowMap;
+
+bool inShadow(vec3 fragToLight, float fallOff) {
+    float closestDepth = texture(shadowMap, fragToLight).r*fallOff;
+    float currentDepth = length(fragToLight);
+    return currentDepth - closestDepth > 0.05;
+}
+
 void main() {
     // retrieve data from G-buffer
     vec3 fragPos = texelFetch(gPosition, ivec2(gl_FragCoord.xy), 0).rgb;
@@ -22,7 +30,8 @@ void main() {
     vec3 albedo = texelFetch(gAlbedoSpec, ivec2(gl_FragCoord.xy), 0).rgb;
     float spec = texelFetch(gAlbedoSpec, ivec2(gl_FragCoord.xy), 0).a;
 
-    if (length(light.position - fragPos) > light.fallOff) {
+    vec3 fragToLight = fragPos - light.position;
+    if (length(fragToLight) > light.fallOff || inShadow(fragToLight, light.fallOff)) {
         discard;
     }
 

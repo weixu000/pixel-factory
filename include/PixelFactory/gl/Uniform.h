@@ -15,11 +15,6 @@ struct Uniform {
   void Set(GLint location) const;
 };
 
-using Uniform1i = Uniform<int>;
-using Uniform1f = Uniform<float>;
-using UniformVec3 = Uniform<glm::vec3>;
-using UniformMat4 = Uniform<glm::mat4>;
-
 template<>
 inline void Uniform<int>::Set(GLint location) const {
   glUniform1i(location, val);
@@ -39,3 +34,12 @@ template<>
 inline void Uniform<glm::mat4>::Set(GLint location) const {
   glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(val));
 }
+
+template<size_t N>
+struct Uniform<std::array<glm::mat4, N>> {
+  std::string name;
+  std::array<glm::mat4, N> val;
+  void Set(GLint location) const {
+    glUniformMatrix4fv(location, N, GL_FALSE, reinterpret_cast<const GLfloat*>(val.data()));
+  }
+};

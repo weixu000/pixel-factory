@@ -28,10 +28,14 @@ class DeferredRenderer {
 
   void DrawAlbedoSpecMap() { DrawGBuffer(GL_COLOR_ATTACHMENT2); }
 
+  void ShadowPass();
+
  private:
   std::unique_ptr<GlTexture2D> position_, normal_, albedo_spec_;
   std::unique_ptr<GlRenderbuffer> depth_;
   std::unique_ptr<GlFramebuffer> gbuffer_;
+
+  std::unique_ptr<GlFramebuffer> shadow_;
 
   std::list<const Mesh *> meshes_;
   std::list<const PointLight *> lights_;
