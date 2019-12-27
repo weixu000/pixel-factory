@@ -1,21 +1,25 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtx/euler_angles.hpp>
+#include "PixelFactory/components/FreeRotator.h"
 
-#include <PixelFactory/components/FreeRotator.h>
-#include <PixelFactory/Event.h>
-#include <PixelFactory/Entity.h>
-#include <PixelFactory/components/Camera.h>
-#include <PixelFactory/EventHandler.h>
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
+#include <glm/gtx/euler_angles.hpp>
+#include <glm/gtx/transform.hpp>
+
+#include "PixelFactory/Entity.h"
+#include "PixelFactory/Event.h"
+#include "PixelFactory/EventHandler.h"
+#include "PixelFactory/components/Camera.h"
 
 void FreeRotator::Start() {
-  entity_->GetEventHandler()->Bind<CursorPositionEvent>("MouseMove",
-                                                        [this](const CursorPositionEvent &e) { OnMouseMove(e); });
-  entity_->GetEventHandler()->Bind<MouseButtonEvent>("MouseButtonPress",
-                                                     [this](const MouseButtonEvent &e) { OnMouseButtonPress(e); });
-  entity_->GetEventHandler()->Bind<MouseButtonEvent>("MouseButtonRelease",
-                                                     [this](const MouseButtonEvent &e) { OnMouseButtonRelease(e); });
+  entity_->GetEventHandler()->Bind<CursorPositionEvent>(
+      "MouseMove", [this](const CursorPositionEvent &e) { OnMouseMove(e); });
+  entity_->GetEventHandler()->Bind<MouseButtonEvent>(
+      "MouseButtonPress",
+      [this](const MouseButtonEvent &e) { OnMouseButtonPress(e); });
+  entity_->GetEventHandler()->Bind<MouseButtonEvent>(
+      "MouseButtonRelease",
+      [this](const MouseButtonEvent &e) { OnMouseButtonRelease(e); });
 }
 
 void FreeRotator::OnMouseMove(const CursorPositionEvent &e) {
@@ -28,7 +32,8 @@ void FreeRotator::OnMouseMove(const CursorPositionEvent &e) {
     eulerX = std::remainder(eulerX + delta.x, 2 * glm::pi<float>());
     eulerY = std::remainder(eulerY + delta.y, 2 * glm::pi<float>());
     auto rotation = glm::eulerAngleYX(eulerX, eulerY);
-    entity_->SetLocalTransform(glm::translate(entity_->LocalTransform().Translation()) * rotation);
+    entity_->SetLocalTransform(
+        glm::translate(entity_->LocalTransform().Translation()) * rotation);
     previous = current;
   }
 }
@@ -45,9 +50,3 @@ void FreeRotator::OnMouseButtonRelease(const MouseButtonEvent &e) {
     startedRotate = false;
   }
 }
-
-
-
-
-
-

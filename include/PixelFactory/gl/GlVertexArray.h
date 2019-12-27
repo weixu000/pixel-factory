@@ -1,22 +1,21 @@
 #pragma once
 
-#include <tuple>
 #include <glad/glad.h>
-#include <glm/glm.hpp>
 
-#include <PixelFactory/GL/GlBuffer.h>
+#include <glm/glm.hpp>
+#include <tuple>
+
+#include "PixelFactory/gl/GlBuffer.h"
 
 class GlContext;
 
 class GlVertexArray {
  public:
-  GlVertexArray(GlVertexArray &&other) noexcept: id_(other.id_) {
+  GlVertexArray(GlVertexArray &&other) noexcept : id_(other.id_) {
     other.id_ = 0U;
   }
 
-  ~GlVertexArray() {
-    glDeleteVertexArrays(1, &id_);
-  }
+  ~GlVertexArray() { glDeleteVertexArrays(1, &id_); }
 
   GlVertexArray &operator=(GlVertexArray &&other) noexcept {
     assert(this != &other);
@@ -41,19 +40,20 @@ class GlVertexArray {
     glVertexArrayAttribBinding(id_, attribindex, bindingindex);
   }
 
-  void SetAttribFormat(GLuint attribindex,
-                       GLint size, GLenum type, GLboolean normalized,
-                       GLuint relativeoffset) {
+  void SetAttribFormat(GLuint attribindex, GLint size, GLenum type,
+                       GLboolean normalized, GLuint relativeoffset) {
     glEnableVertexArrayAttrib(id_, attribindex);
-    glVertexArrayAttribFormat(id_, attribindex, size, type, normalized, relativeoffset);
+    glVertexArrayAttribFormat(id_, attribindex, size, type, normalized,
+                              relativeoffset);
   }
 
-  template<typename T>
+  template <typename T>
   void SetAttribFormat(GLuint attribindex, GLuint relativeoffset);
 
-  template<typename Tuple>
+  template <typename Tuple>
   void SetAttribFormat(GLuint bindingindex) {
-    SetAttribFormatFromTupleImpl<Tuple>(bindingindex, std::make_index_sequence<std::tuple_size_v<Tuple>>{});
+    SetAttribFormatFromTupleImpl<Tuple>(
+        bindingindex, std::make_index_sequence<std::tuple_size_v<Tuple>>{});
   }
 
  private:
@@ -62,21 +62,25 @@ class GlVertexArray {
   friend class GlContext;
   explicit GlVertexArray(GLuint id) : id_(id) {}
 
-  template<typename Tuple, std::size_t... Is>
-  void SetAttribFormatFromTupleImpl(GLuint bindingindex, std::index_sequence<Is...>) {
-    (AssociateAttrib(Is, bindingindex),...);
+  template <typename Tuple, std::size_t... Is>
+  void SetAttribFormatFromTupleImpl(GLuint bindingindex,
+                                    std::index_sequence<Is...>) {
+    (AssociateAttrib(Is, bindingindex), ...);
     GLuint offset = sizeof(Tuple);
     ((offset -= sizeof(std::tuple_element_t<Is, Tuple>),
-        SetAttribFormat<std::tuple_element_t<Is, Tuple>>(Is, offset)), ...);
+      SetAttribFormat<std::tuple_element_t<Is, Tuple>>(Is, offset)),
+     ...);
   }
 };
 
-template<>
-inline void GlVertexArray::SetAttribFormat<glm::vec2>(GLuint attribindex, GLuint relativeoffset) {
+template <>
+inline void GlVertexArray::SetAttribFormat<glm::vec2>(GLuint attribindex,
+                                                      GLuint relativeoffset) {
   SetAttribFormat(attribindex, 2, GL_FLOAT, GL_FALSE, relativeoffset);
 }
 
-template<>
-inline void GlVertexArray::SetAttribFormat<glm::vec3>(GLuint attribindex, GLuint relativeoffset) {
+template <>
+inline void GlVertexArray::SetAttribFormat<glm::vec3>(GLuint attribindex,
+                                                      GLuint relativeoffset) {
   SetAttribFormat(attribindex, 3, GL_FLOAT, GL_FALSE, relativeoffset);
 }

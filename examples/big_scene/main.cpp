@@ -19,8 +19,8 @@
 #include <PixelFactory/renderer/DrawOptions.h>
 
 class MyWindow : public Window {
-public:
-  MyWindow() : Window(800, 600, "Mesh Viewer") {
+ public:
+  MyWindow() : Window(800, 600, "Big Scene") {
     handler_->Bind<ResizeEvent>("Resize",
                                 [this](const ResizeEvent &e) { OnResize(e); });
     scene_.SetEventHandler(handler_.get());
@@ -32,14 +32,14 @@ public:
     renderer_->Collect(scene_);
   }
 
-protected:
+ protected:
   void Draw() override {
     renderer_->GeometryPass({*camera_});
     renderer_->ShadowPass();
     renderer_->LightingPass({*camera_});
   }
 
-private:
+ private:
   Entity scene_;
   Camera *camera_;
   std::unique_ptr<DeferredRenderer> renderer_;

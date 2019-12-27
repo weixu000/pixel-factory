@@ -1,27 +1,31 @@
+#include "PixelFactory/renderer/DeferredRenderer.h"
+
 #include <glm/gtx/transform.hpp>
 
-#include <PixelFactory/renderer/DeferredRenderer.h>
-#include <PixelFactory/gl/GlContext.h>
-#include <PixelFactory/Entity.h>
-#include <PixelFactory/components/Mesh.h>
-#include <PixelFactory/gl/GlShader.h>
-#include <PixelFactory/renderer/DrawOptions.h>
-#include <PixelFactory/components/Camera.h>
-#include <PixelFactory/components/PointLight.h>
+#include "PixelFactory/Entity.h"
+#include "PixelFactory/components/Camera.h"
+#include "PixelFactory/components/Mesh.h"
+#include "PixelFactory/components/PointLight.h"
+#include "PixelFactory/gl/GlContext.h"
+#include "PixelFactory/gl/GlShader.h"
+#include "PixelFactory/renderer/DrawOptions.h"
 
 namespace {
 std::unique_ptr<GlShader> geomtery_pass_shader;
 std::unique_ptr<GlShader> lighting_pass_shader;
 std::unique_ptr<GlShader> shadow_pass_shader;
-}
+}  // namespace
 
 DeferredRenderer::DeferredRenderer(GlContext &context, int width, int height)
     : context_(context), width_(width), height_(height) {
   if (geomtery_pass_shader == nullptr) {
-    geomtery_pass_shader = std::make_unique<GlShader>("shaders/g_buffer.vert", "shaders/g_buffer.frag");
-    lighting_pass_shader = std::make_unique<GlShader>("shaders/flat.vert", "shaders/pointlight_phong.frag");
-    shadow_pass_shader =
-        std::make_unique<GlShader>("shaders/shadow_map.vert", "shaders/shadow_map.frag", "shaders/shadow_map.geom");
+    geomtery_pass_shader = std::make_unique<GlShader>("shaders/g_buffer.vert",
+                                                      "shaders/g_buffer.frag");
+    lighting_pass_shader = std::make_unique<GlShader>(
+        "shaders/flat.vert", "shaders/pointlight_phong.frag");
+    shadow_pass_shader = std::make_unique<GlShader>("shaders/shadow_map.vert",
+                                                    "shaders/shadow_map.frag",
+                                                    "shaders/shadow_map.geom");
   }
 
   gbuffer_ = std::make_unique<GlFramebuffer>(context_.CreateFramebuffer());
@@ -41,7 +45,8 @@ DeferredRenderer::DeferredRenderer(GlContext &context, int width, int height)
   albedo_spec_->SetFilter(GL_NEAREST, GL_NEAREST);
   gbuffer_->Attach(GL_COLOR_ATTACHMENT2, *albedo_spec_);
 
-  gbuffer_->DrawBuffers({GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2});
+  gbuffer_->DrawBuffers(
+      {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2});
 
   depth_ = std::make_unique<GlRenderbuffer>(context_.CreateRenderbuffer());
   depth_->ImmutableStorage(GL_DEPTH_COMPONENT24, width_, height);
@@ -77,8 +82,9 @@ void DeferredRenderer::GeometryPass(const DrawOptions &options) {
   geomtery_pass_shader->Use();
   geomtery_pass_shader->SetUniform("projection", options.camera.Projection());
   geomtery_pass_shader->SetUniform("view", options.camera.View());
-  for (auto &mesh:meshes_) {
-    geomtery_pass_shader->SetUniform("world", mesh->GetEntity()->WorldTransform().matrix);
+  for (auto &mesh : meshes_) {
+    geomtery_pass_shader->SetUniform(
+        "world", mesh->GetEntity()->WorldTransform().matrix);
 
     glActiveTexture(GL_TEXTURE0);
     context_.Bind(*mesh->material_.diffuse);
@@ -116,18 +122,19 @@ void DeferredRenderer::LightingPass(const DrawOptions &options) {
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE);
   glBlendEquation(GL_FUNC_ADD);
-  glDisable(GL_DEPTH_TEST); // Render every light
+  glDisable(GL_DEPTH_TEST);  // Render every light
   // Render back faces of light volume so light is working when camera inside
   glCullFace(GL_FRONT);
-  for (auto &light:lights_) {
-    lighting_pass_shader->SetUniform("light.position", light->GetEntity()->WorldTransform().Translation());
+  for (auto &light : lights_) {
+    lighting_pass_shader->SetUniform(
+        "light.position", light->GetEntity()->WorldTransform().Translation());
     lighting_pass_shader->SetUniform("light.color", light->color);
     lighting_pass_shader->SetUniform("light.attenuation", light->attenuation);
     lighting_pass_shader->SetUniform("light.fallOff", light->fall_off);
 
-    lighting_pass_shader->SetUniform("world",
-                                     light->GetEntity()->WorldTransform().matrix
-                                         * glm::scale(glm::vec3(light->fall_off)));
+    lighting_pass_shader->SetUniform(
+        "world", light->GetEntity()->WorldTransform().matrix *
+                     glm::scale(glm::vec3(light->fall_off)));
 
     glActiveTexture(GL_TEXTURE3);
     context_.Bind(*light->shadow_map);
@@ -142,9 +149,8 @@ void DeferredRenderer::LightingPass(const DrawOptions &options) {
   glDisable(GL_BLEND);
 
   // Copy depth buffer to default framebuffer for future use
-  glBlitNamedFramebuffer(gbuffer_->Id(), context_.DefaultFramebuffer().Id(),
-                         0, 0, width_, height_,
-                         0, 0, width_, height_,
+  glBlitNamedFramebuffer(gbuffer_->Id(), context_.DefaultFramebuffer().Id(), 0,
+                         0, width_, height_, 0, 0, width_, height_,
                          GL_DEPTH_BUFFER_BIT, GL_NEAREST);
 }
 
@@ -152,16 +158,18 @@ void DeferredRenderer::ShadowPass() {
   context_.Bind(FramebufferTarget::Framebuffer, *shadow_);
   shadow_pass_shader->Use();
 
-  for (auto &light:lights_) {
+  for (auto &light : lights_) {
     shadow_->Attach(GL_DEPTH_ATTACHMENT, *light->shadow_map);
     if (!shadow_->IsComplete()) {
       throw std::runtime_error("Shadow FBO not complete");
     }
 
     context_.Clear(false, true);
-    context_.Viewport(0, 0, light->shadow_map->Size(), light->shadow_map->Size());
+    context_.Viewport(0, 0, light->shadow_map->Size(),
+                      light->shadow_map->Size());
 
-    auto light_translation = glm::translate(-light->GetEntity()->WorldTransform().Translation());
+    auto light_translation =
+        glm::translate(-light->GetEntity()->WorldTransform().Translation());
     std::array<glm::mat4, 6> light_views{};
     for (int face = 0; face < 6; ++face) {
       light_views[face] = PointLight::shadow_view[face] * light_translation;
@@ -170,8 +178,9 @@ void DeferredRenderer::ShadowPass() {
     shadow_pass_shader->SetUniform("lightProj", PointLight::shadow_projection);
     shadow_pass_shader->SetUniform("fallOff", light->fall_off);
 
-    for (auto &mesh:meshes_) {
-      shadow_pass_shader->SetUniform("world", mesh->GetEntity()->WorldTransform().matrix);
+    for (auto &mesh : meshes_) {
+      shadow_pass_shader->SetUniform(
+          "world", mesh->GetEntity()->WorldTransform().matrix);
       context_.Bind(*mesh->vao_);
       glDrawElements(GL_TRIANGLES, mesh->count_, GL_UNSIGNED_INT, nullptr);
     }
@@ -183,8 +192,7 @@ void DeferredRenderer::ShadowPass() {
 
 void DeferredRenderer::DrawGBuffer(GLenum mode) {
   gbuffer_->ReadBuffer(mode);
-  glBlitNamedFramebuffer(gbuffer_->Id(), context_.DefaultFramebuffer().Id(),
-                         0, 0, width_, height_,
-                         0, 0, width_, height_,
+  glBlitNamedFramebuffer(gbuffer_->Id(), context_.DefaultFramebuffer().Id(), 0,
+                         0, width_, height_, 0, 0, width_, height_,
                          GL_COLOR_BUFFER_BIT, GL_NEAREST);
 }

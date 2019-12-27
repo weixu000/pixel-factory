@@ -1,8 +1,6 @@
 #pragma once
 
-struct Event {
-
-};
+struct Event {};
 
 struct UpdateEvent : public Event {
   float delta_time;
@@ -35,4 +33,3 @@ struct CursorPositionEvent : public Event {
 struct ScrollEvent : public Event {
   float x_offset, y_offset;
 };
-

@@ -3,20 +3,18 @@
 #include <glad/glad.h>
 
 enum class TextureTarget : GLenum {
-  Texture1D = GL_TEXTURE_1D,
   Texture2D = GL_TEXTURE_2D,
   TexutureCubeMap = GL_TEXTURE_CUBE_MAP,
 };
 
 class GlTexture {
  public:
-  GlTexture(GlTexture &&other) noexcept: target_(other.target_), id_(other.id_) {
+  GlTexture(GlTexture &&other) noexcept
+      : target_(other.target_), id_(other.id_) {
     other.id_ = 0U;
   }
 
-  virtual ~GlTexture() {
-    glDeleteTextures(1, &id_);
-  }
+  virtual ~GlTexture() { glDeleteTextures(1, &id_); }
 
   GlTexture &operator=(GlTexture &&other) noexcept {
     assert(this != &other);
@@ -44,5 +42,6 @@ class GlTexture {
   const TextureTarget target_;
   GLuint id_;
 
-  explicit GlTexture(TextureTarget target, GLuint id) : target_(target), id_(id) {}
+  explicit GlTexture(TextureTarget target, GLuint id)
+      : target_(target), id_(id) {}
 };

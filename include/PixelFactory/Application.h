@@ -20,5 +20,3 @@ class Application {
   friend class Window;
   std::list<Window *> windows_;
 };
-
-

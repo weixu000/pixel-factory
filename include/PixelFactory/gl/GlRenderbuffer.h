@@ -4,19 +4,13 @@
 
 class GlContext;
 
-enum class RenderbufferTarget : GLenum {
-  Renderbuffer = GL_RENDERBUFFER
-};
-
 class GlRenderbuffer {
  public:
-  GlRenderbuffer(GlRenderbuffer &&other) noexcept: id_(other.id_) {
+  GlRenderbuffer(GlRenderbuffer &&other) noexcept : id_(other.id_) {
     other.id_ = 0U;
   }
 
-  ~GlRenderbuffer() {
-    glDeleteRenderbuffers(1, &id_);
-  }
+  ~GlRenderbuffer() { glDeleteRenderbuffers(1, &id_); }
 
   GlRenderbuffer &operator=(GlRenderbuffer &&other) noexcept {
     assert(this != &other);

@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <PixelFactory/components/Component.h>
+#include "PixelFactory/components/Component.h"
 
 class GlContext;
 
@@ -13,7 +13,5 @@ class Axes : public Component {
   void Draw(const DrawOptions &options);
 
  private:
-  GlContext& context_;
+  GlContext &context_;
 };
-
-

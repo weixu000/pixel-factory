@@ -8,5 +8,3 @@ struct PhongMaterial {
   std::shared_ptr<GlTexture2D> diffuse;
   std::shared_ptr<GlTexture2D> specular;
 };
-
-

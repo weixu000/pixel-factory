@@ -16,5 +16,3 @@ class Time {
   static float now_;
   static float delta_;
 };
-
-

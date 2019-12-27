@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-#include <PixelFactory/components/Component.h>
+#include "PixelFactory/components/Component.h"
 
 class UpdateEvent;
 class KeyEvent;
@@ -20,5 +20,6 @@ class FreeMover : public Component {
   void Start() override;
 
  private:
-  bool forward_ = false, left_ = false, backward_ = false, right_ = false, up_ = false, down_ = false;
+  bool forward_ = false, left_ = false, backward_ = false, right_ = false,
+       up_ = false, down_ = false;
 };

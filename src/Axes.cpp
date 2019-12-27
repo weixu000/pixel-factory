@@ -1,18 +1,20 @@
+#include "PixelFactory/components/Axes.h"
+
 #include <glad/glad.h>
+
 #include <glm/glm.hpp>
 #include <glm/gtx/euler_angles.hpp>
 
-#include <PixelFactory/components/Axes.h>
-#include <PixelFactory/gl/GlContext.h>
-#include <PixelFactory/renderer/DrawOptions.h>
-#include <PixelFactory/components/Camera.h>
-#include <PixelFactory/gl/GlShader.h>
-#include <PixelFactory/Entity.h>
+#include "PixelFactory/Entity.h"
+#include "PixelFactory/components/Camera.h"
+#include "PixelFactory/gl/GlContext.h"
+#include "PixelFactory/gl/GlShader.h"
+#include "PixelFactory/renderer/DrawOptions.h"
 
 namespace {
 std::unique_ptr<GlVertexArray> vao_;
 std::unique_ptr<GlShader> shader_;
-}
+}  // namespace
 
 Axes::Axes(GlContext &context) : context_(context) {
   if (vao_ == nullptr) {
@@ -28,7 +30,8 @@ Axes::Axes(GlContext &context) : context_(context) {
     vao_->SetAttribFormat<glm::vec3>(0, 0);
     vao_->AssociateAttrib(0, 0);
 
-    shader_ = std::make_unique<GlShader>("shaders/flat.vert", "shaders/flat.frag");
+    shader_ =
+        std::make_unique<GlShader>("shaders/flat.vert", "shaders/flat.frag");
   }
 }
 
@@ -43,12 +46,13 @@ void Axes::Draw(const DrawOptions &options) {
   shader_->SetUniform("color", glm::vec3(1.0f, 0.0f, 0.0f));
   glDrawArrays(GL_LINES, 0, 2);
 
-  shader_->SetUniform("world", entity_->WorldTransform().matrix * glm::eulerAngleZ(glm::pi<float>() / 2));
+  shader_->SetUniform("world", entity_->WorldTransform().matrix *
+                                   glm::eulerAngleZ(glm::pi<float>() / 2));
   shader_->SetUniform("color", glm::vec3(0.0f, 1.0f, 0.0f));
   glDrawArrays(GL_LINES, 0, 2);
 
-  shader_->SetUniform("world", entity_->WorldTransform().matrix * glm::eulerAngleY(-glm::pi<float>() / 2));
+  shader_->SetUniform("world", entity_->WorldTransform().matrix *
+                                   glm::eulerAngleY(-glm::pi<float>() / 2));
   shader_->SetUniform("color", glm::vec3(0.0f, 0.0f, 1.0f));
   glDrawArrays(GL_LINES, 0, 2);
 }
-

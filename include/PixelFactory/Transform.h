@@ -11,5 +11,3 @@ struct Transform {
 
   glm::mat4 matrix;
 };
-
-

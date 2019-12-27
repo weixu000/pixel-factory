@@ -1,25 +1,25 @@
 #pragma once
 
-#include <string>
-#include <list>
-#include <unordered_map>
 #include <functional>
+#include <list>
+#include <string>
+#include <unordered_map>
 
 class Event;
 
 class EventHandler {
  public:
-  using EventTag=std::string;
+  using EventTag = std::string;
 
   void ProcessEvent(const EventTag &tag, const Event &event) {
     if (listeners_.count(tag)) {
-      for (auto &func:listeners_[tag]) {
+      for (auto &func : listeners_[tag]) {
         func(event);
       }
     }
   }
 
-  template<typename EventType, typename Func>
+  template <typename EventType, typename Func>
   void Bind(const EventTag &tag, Func func) {
     if (!listeners_.count(tag)) {
       listeners_[tag] = std::list<std::function<void(const Event &)>>();
@@ -30,7 +30,6 @@ class EventHandler {
   }
 
  private:
-  std::unordered_map<EventTag, std::list<std::function<void(const Event &)>>> listeners_;
+  std::unordered_map<EventTag, std::list<std::function<void(const Event &)>>>
+      listeners_;
 };
-
-

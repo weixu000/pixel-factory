@@ -1,11 +1,11 @@
 #pragma once
 
-#include <PixelFactory/GL/GlBuffer.h>
-#include <PixelFactory/GL/GlFramebuffer.h>
-#include <PixelFactory/GL/GlRenderbuffer.h>
-#include <PixelFactory/GL/GlTexture2D.h>
-#include <PixelFactory/GL/GlTextureCubemap.h>
-#include <PixelFactory/GL/GlVertexArray.h>
+#include "PixelFactory/gl/GlBuffer.h"
+#include "PixelFactory/gl/GlFramebuffer.h"
+#include "PixelFactory/gl/GlRenderbuffer.h"
+#include "PixelFactory/gl/GlTexture2D.h"
+#include "PixelFactory/gl/GlTextureCubemap.h"
+#include "PixelFactory/gl/GlVertexArray.h"
 
 class GlContext {
 public:
@@ -45,6 +45,6 @@ public:
   GlRenderbuffer null_renderbuffer_;
   GlTexture2D null_texture2d_;
   GlTextureCubemap null_texture_cubemap_;
-  GlFramebuffer default_framebuffer_; // Default framebuffer
+  GlFramebuffer default_framebuffer_;  // Default framebuffer
   GlVertexArray null_vertex_array_;
 };

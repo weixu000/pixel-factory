@@ -1,15 +1,16 @@
 #pragma once
 
-#include <stb_image.h>
+#include <stdexcept>
 
-#include <PixelFactory/GL/GlTexture.h>
-#include <PixelFactory/Image.h>
+#include "PixelFactory/Image.h"
+#include "PixelFactory/gl/GlTexture.h"
 
 class GlContext;
 
 class GlTexture2D : public GlTexture {
  public:
-  void ImmutableStorage(GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height) {
+  void ImmutableStorage(GLsizei levels, GLenum internalformat, GLsizei width,
+                        GLsizei height) {
     glTextureStorage2D(id_, levels, internalformat, width, height);
   }
 
@@ -17,26 +18,30 @@ class GlTexture2D : public GlTexture {
     Image image(image_path, desired_channels);
     GLenum format, internalformat;
     switch (desired_channels) {
-      case 1:format = GL_RED;
+      case 1:
+        format = GL_RED;
         internalformat = GL_R8;
         break;
-      case 3:format = GL_RGB;
+      case 3:
+        format = GL_RGB;
         internalformat = GL_RGB8;
         break;
-      case 4:format = GL_RGBA;
+      case 4:
+        format = GL_RGBA;
         internalformat = GL_RGBA8;
         break;
-      default:throw std::invalid_argument("Wrong desired_channels");
+      default:
+        throw std::invalid_argument("Wrong desired_channels");
     }
     ImmutableStorage(1, internalformat, image.width, image.height);
-    Upload(0, 0, 0, image.width, image.height, format, GL_UNSIGNED_BYTE, image.data);
+    Upload(0, 0, 0, image.width, image.height, format, GL_UNSIGNED_BYTE,
+           image.data);
   }
 
-  void Upload(GLint level,
-              GLint xoffset, GLint yoffset,
-              GLsizei width, GLsizei height,
-              GLenum format, GLenum type, const void *pixels) {
-    glTextureSubImage2D(id_, level, xoffset, yoffset, width, height, format, type, pixels);
+  void Upload(GLint level, GLint xoffset, GLint yoffset, GLsizei width,
+              GLsizei height, GLenum format, GLenum type, const void *pixels) {
+    glTextureSubImage2D(id_, level, xoffset, yoffset, width, height, format,
+                        type, pixels);
   }
 
  private:

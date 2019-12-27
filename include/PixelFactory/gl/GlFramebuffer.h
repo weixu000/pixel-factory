@@ -2,9 +2,11 @@
 
 #include <glad/glad.h>
 
-#include <PixelFactory/GL/GlRenderbuffer.h>
-#include <PixelFactory/GL/GlTexture2D.h>
-#include <PixelFactory/GL/GlTextureCubemap.h>
+#include <initializer_list>
+
+#include "PixelFactory/gl/GlRenderbuffer.h"
+#include "PixelFactory/gl/GlTexture2D.h"
+#include "PixelFactory/gl/GlTextureCubemap.h"
 
 class GlContext;
 
@@ -16,7 +18,7 @@ enum class FramebufferTarget : GLenum {
 };
 
 class GlFramebuffer {
-public:
+ public:
   GlFramebuffer(GlFramebuffer &&other) noexcept : id_(other.id_) {
     other.id_ = 0U;
   }
@@ -58,7 +60,7 @@ public:
            GL_FRAMEBUFFER_COMPLETE;
   }
 
-private:
+ private:
   GLuint id_ = 0U;
 
   friend class GlContext;

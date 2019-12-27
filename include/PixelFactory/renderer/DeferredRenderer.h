@@ -1,8 +1,9 @@
 #pragma once
 
-#include <memory>
-#include <list>
 #include <glad/glad.h>
+
+#include <list>
+#include <memory>
 
 class GlContext;
 class GlTexture2D;
@@ -32,7 +33,7 @@ class DeferredRenderer {
   void ShadowPass();
 
  private:
-  GlContext& context_;
+  GlContext &context_;
 
   std::unique_ptr<GlTexture2D> position_, normal_, albedo_spec_;
   std::unique_ptr<GlRenderbuffer> depth_;

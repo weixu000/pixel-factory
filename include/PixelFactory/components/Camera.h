@@ -1,7 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 
-#include <PixelFactory/components/Component.h>
+#include "PixelFactory/components/Component.h"
 
 class UpdateEvent;
 
@@ -33,5 +33,3 @@ class Camera : public Component {
   float z_near_ = 0.1f, z_far_ = 1000.0f;
   float fovy_ = 60.f;
 };
-
-

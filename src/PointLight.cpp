@@ -1,18 +1,19 @@
-#include <PixelFactory/components/PointLight.h>
-#include <PixelFactory/ModelLoader.h>
-#include <PixelFactory/gl/GlContext.h>
-#include <PixelFactory/gl/GlVertexArray.h>
-#include <PixelFactory/gl/GlBuffer.h>
-#include <PixelFactory/gl/GlTextureCubemap.h>
+#include "PixelFactory/components/PointLight.h"
 
-PointLight::PointLight(GlContext &context)
-    : context_(context) {
-  shadow_map = std::make_unique<GlTextureCubemap>(context_.CreateTextureCubemap());
+#include "PixelFactory/ModelLoader.h"
+#include "PixelFactory/gl/GlBuffer.h"
+#include "PixelFactory/gl/GlContext.h"
+#include "PixelFactory/gl/GlTextureCubemap.h"
+#include "PixelFactory/gl/GlVertexArray.h"
+
+PointLight::PointLight(GlContext &context) : context_(context) {
+  shadow_map =
+      std::make_unique<GlTextureCubemap>(context_.CreateTextureCubemap());
   shadow_map->ImmutableStorage(1, GL_DEPTH_COMPONENT16, 1024);
   shadow_map->SetFilter(GL_NEAREST, GL_NEAREST);
 
   if (vao == nullptr) {
-    auto[indices, attributes] = LoadVerticesFromObjFile("meshes/sphere.obj");
+    auto [indices, attributes] = LoadVerticesFromObjFile("meshes/sphere.obj");
 
     count = indices.size();
 

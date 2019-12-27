@@ -1,22 +1,26 @@
-#include <glad/glad.h>
+#include "PixelFactory/components/Trackball.h"
+
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+
 #include <glm/gtx/transform.hpp>
 
-#include <PixelFactory/components/Trackball.h>
-#include <PixelFactory/Event.h>
-#include <PixelFactory/Entity.h>
-#include <PixelFactory/components/Camera.h>
-#include <PixelFactory/EventHandler.h>
+#include "PixelFactory/Entity.h"
+#include "PixelFactory/Event.h"
+#include "PixelFactory/EventHandler.h"
+#include "PixelFactory/components/Camera.h"
 
 void Trackball::Start() {
-  entity_->GetEventHandler()->Bind<CursorPositionEvent>("MouseMove",
-                                                        [this](const CursorPositionEvent &e) { OnMouseMove(e); });
-  entity_->GetEventHandler()->Bind<MouseButtonEvent>("MouseButtonPress",
-                                                     [this](const MouseButtonEvent &e) { OnMouseButtonPress(e); });
-  entity_->GetEventHandler()->Bind<MouseButtonEvent>("MouseButtonRelease",
-                                                     [this](const MouseButtonEvent &e) { OnMouseButtonRelease(e); });
-  entity_->GetEventHandler()->Bind<ScrollEvent>("Scroll",
-                                                [this](const ScrollEvent &e) { OnScroll(e); });
+  entity_->GetEventHandler()->Bind<CursorPositionEvent>(
+      "MouseMove", [this](const CursorPositionEvent &e) { OnMouseMove(e); });
+  entity_->GetEventHandler()->Bind<MouseButtonEvent>(
+      "MouseButtonPress",
+      [this](const MouseButtonEvent &e) { OnMouseButtonPress(e); });
+  entity_->GetEventHandler()->Bind<MouseButtonEvent>(
+      "MouseButtonRelease",
+      [this](const MouseButtonEvent &e) { OnMouseButtonRelease(e); });
+  entity_->GetEventHandler()->Bind<ScrollEvent>(
+      "Scroll", [this](const ScrollEvent &e) { OnScroll(e); });
 }
 
 void Trackball::OnMouseMove(const CursorPositionEvent &e) {
@@ -54,13 +58,12 @@ void Trackball::OnMouseButtonRelease(const MouseButtonEvent &e) {
 
 void Trackball::OnScroll(const ScrollEvent &e) {
   entity_->SetLocalTransform(
-      glm::scale(glm::vec3(glm::max(0.0f, 1 + 0.1f * e.y_offset))) * entity_->LocalTransform().matrix);
+      glm::scale(glm::vec3(glm::max(0.0f, 1 + 0.1f * e.y_offset))) *
+      entity_->LocalTransform().matrix);
 }
 
 glm::vec3 Trackball::ViewportToTrackball(float x, float y) {
-  glm::vec3 ret(2 * x - 1,
-                -(2 * y - 1),
-                0.0f);
+  glm::vec3 ret(2 * x - 1, -(2 * y - 1), 0.0f);
   auto z2 = 1 - ret.x * ret.x - ret.y * ret.y;
   if (z2 >= 0) {
     ret.z = glm::sqrt(z2);

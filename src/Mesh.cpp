@@ -1,13 +1,16 @@
-#include <PixelFactory/components/Mesh.h>
-#include <PixelFactory/gl/GlContext.h>
-#include <PixelFactory/gl/GlVertexArray.h>
-#include <PixelFactory/gl/GlBuffer.h>
-#include <PixelFactory/Entity.h>
+#include "PixelFactory/components/Mesh.h"
 
-Mesh::Mesh(GlContext &context, const std::vector<GLuint> &indices, const std::vector<VertexNormalTex> &attributes)
+#include "PixelFactory/Entity.h"
+#include "PixelFactory/gl/GlBuffer.h"
+#include "PixelFactory/gl/GlContext.h"
+#include "PixelFactory/gl/GlVertexArray.h"
+
+Mesh::Mesh(GlContext &context, const std::vector<GLuint> &indices,
+           const std::vector<VertexNormalTex> &attributes)
     : context_(context), count_(indices.size()) {
   auto vbo = context_.CreateBuffer();
-  vbo.ImmutableStorage(sizeof(VertexNormalTex) * attributes.size(), attributes.data());
+  vbo.ImmutableStorage(sizeof(VertexNormalTex) * attributes.size(),
+                       attributes.data());
   auto ebo = context_.CreateBuffer();
   ebo.ImmutableStorage(sizeof(GLuint) * indices.size(), indices.data());
 
@@ -18,6 +21,6 @@ Mesh::Mesh(GlContext &context, const std::vector<GLuint> &indices, const std::ve
 }
 
 Mesh Mesh::FromObjFile(GlContext &context, const std::string &file_path) {
-  auto[indices, attributes] = LoadObjFile(file_path);
+  auto [indices, attributes] = LoadObjFile(file_path);
   return Mesh(context, indices, attributes);
 }

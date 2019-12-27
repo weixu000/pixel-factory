@@ -17,5 +17,3 @@ class Component {
 
   virtual void Start() {}
 };
-
-

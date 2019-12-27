@@ -1,7 +1,8 @@
 #pragma once
 
-#include <cassert>
 #include <glad/glad.h>
+
+#include <cassert>
 
 class GlContext;
 
@@ -12,13 +13,9 @@ enum class BufferTarget : GLenum {
 
 class GlBuffer {
  public:
-  GlBuffer(GlBuffer &&other) noexcept: id_(other.id_) {
-    other.id_ = 0U;
-  }
+  GlBuffer(GlBuffer &&other) noexcept : id_(other.id_) { other.id_ = 0U; }
 
-  ~GlBuffer() {
-    glDeleteBuffers(1, &id_);
-  }
+  ~GlBuffer() { glDeleteBuffers(1, &id_); }
 
   GlBuffer &operator=(GlBuffer &&other) noexcept {
     assert(this != &other);
@@ -30,7 +27,8 @@ class GlBuffer {
 
   [[nodiscard]] GLuint Id() const { return id_; }
 
-  void ImmutableStorage(GLsizeiptr size, const void *data, GLbitfield flags = 0) {
+  void ImmutableStorage(GLsizeiptr size, const void *data,
+                        GLbitfield flags = 0) {
     glNamedBufferStorage(id_, size, data, flags);
   }
 
@@ -40,5 +38,3 @@ class GlBuffer {
   friend class GlContext;
   explicit GlBuffer(GLuint id) : id_(id) {}
 };
-
-

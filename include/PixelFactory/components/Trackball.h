@@ -1,7 +1,8 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <PixelFactory/components/Component.h>
+
+#include "PixelFactory/components/Component.h"
 
 class Camera;
 class MouseButtonEvent;

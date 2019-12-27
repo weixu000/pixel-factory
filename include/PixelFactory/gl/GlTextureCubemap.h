@@ -1,6 +1,6 @@
 #pragma once
 
-#include <PixelFactory/GL/GlTexture.h>
+#include "PixelFactory/gl/GlTexture.h"
 
 class GlContext;
 
@@ -17,5 +17,6 @@ class GlTextureCubemap : public GlTexture {
   GLsizei size_ = 0;
 
   friend class GlContext;
-  explicit GlTextureCubemap(GLuint id) : GlTexture(TextureTarget::TexutureCubeMap, id) {}
+  explicit GlTextureCubemap(GLuint id)
+      : GlTexture(TextureTarget::TexutureCubeMap, id) {}
 };

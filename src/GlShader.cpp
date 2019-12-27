@@ -1,7 +1,7 @@
-#include <iostream>
-#include <fstream>
+#include "PixelFactory/gl/GlShader.h"
 
-#include <PixelFactory/gl/GlShader.h>
+#include <fstream>
+#include <iostream>
 
 namespace {
 enum class ShaderType : GLenum {
@@ -20,8 +20,7 @@ GLuint LoadSingleShader(const std::string &shader_file_path, ShaderType type) {
   std::ifstream stream(shader_file_path, std::ios::in);
   if (stream.is_open()) {
     std::string line;
-    while (getline(stream, line))
-      code += "\n" + line;
+    while (getline(stream, line)) code += "\n" + line;
     stream.close();
   } else {
     throw std::runtime_error("Cannot open " + shader_file_path);
@@ -50,15 +49,19 @@ GLuint LoadSingleShader(const std::string &shader_file_path, ShaderType type) {
 
   return id;
 }
-}
+}  // namespace
 
 void GlShader::CompileProgram(const std::string &vertex_file_path,
                               const std::string &fragment_file_path,
                               const std::string &geometry_file_path) {
-// Create the vertex shader and fragment shader.
+  // Create the vertex shader and fragment shader.
   auto vertex_id = LoadSingleShader(vertex_file_path, ShaderType::VectexShader);
-  auto fragment_id = LoadSingleShader(fragment_file_path, ShaderType::FragementShader);
-  auto geometry_id = geometry_file_path.empty() ? 0 : LoadSingleShader(geometry_file_path, ShaderType::GeometryShader);
+  auto fragment_id =
+      LoadSingleShader(fragment_file_path, ShaderType::FragementShader);
+  auto geometry_id =
+      geometry_file_path.empty()
+          ? 0
+          : LoadSingleShader(geometry_file_path, ShaderType::GeometryShader);
 
   // Link the program.
   std::cout << "Linking program" << std::endl;
@@ -80,8 +83,8 @@ void GlShader::CompileProgram(const std::string &vertex_file_path,
   }
 
   if (result != GL_TRUE) {
-    throw std::runtime_error(
-        "Program link error: " + vertex_file_path + ", " + fragment_file_path + ", " + geometry_file_path);
+    throw std::runtime_error("Program link error: " + vertex_file_path + ", " +
+                             fragment_file_path + ", " + geometry_file_path);
   }
 
   // Detach and delete the shaders as they are no longer needed.

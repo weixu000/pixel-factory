@@ -1,8 +1,8 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <tuple>
-#include <memory>
 
 class Application;
 class GLFWwindow;
