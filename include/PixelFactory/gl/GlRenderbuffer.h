@@ -2,18 +2,14 @@
 
 #include <glad/glad.h>
 
+class GlContext;
+
+enum class RenderbufferTarget : GLenum {
+  Renderbuffer = GL_RENDERBUFFER
+};
+
 class GlRenderbuffer {
  public:
-  enum class Target : GLenum {
-    Unbound = 0,
-    Renderbuffer = GL_RENDERBUFFER
-  };
-
-  GlRenderbuffer(GLenum internalformat, GLsizei width, GLsizei height) {
-    glCreateRenderbuffers(1, &id_);
-    glNamedRenderbufferStorage(id_, internalformat, width, height);
-  }
-
   GlRenderbuffer(GlRenderbuffer &&other) noexcept: id_(other.id_) {
     other.id_ = 0U;
   }
@@ -32,17 +28,13 @@ class GlRenderbuffer {
 
   [[nodiscard]] GLuint Id() const { return id_; }
 
-  void Bind(Target target = Target::Renderbuffer) {
-    target_ = target;
-    glBindRenderbuffer(static_cast<GLenum>(target_), id_);
-  }
-
-  void Unbind() {
-    glBindRenderbuffer(static_cast<GLenum>(target_), 0);
-    target_ = Target::Unbound;
+  void ImmutableStorage(GLenum internalformat, GLsizei width, GLsizei height) {
+    glNamedRenderbufferStorage(id_, internalformat, width, height);
   }
 
  private:
   GLuint id_ = 0U;
-  Target target_ = Target::Unbound;
+
+  friend class GlContext;
+  explicit GlRenderbuffer(GLuint id) : id_(id) {}
 };

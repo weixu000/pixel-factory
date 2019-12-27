@@ -4,6 +4,7 @@
 #include <list>
 #include <glad/glad.h>
 
+class GlContext;
 class GlTexture2D;
 class GlRenderbuffer;
 class GlFramebuffer;
@@ -14,7 +15,7 @@ class DrawOptions;
 
 class DeferredRenderer {
  public:
-  DeferredRenderer(int width, int height);
+  DeferredRenderer(GlContext &context, int width, int height);
 
   void Collect(const Entity &scene);
 
@@ -31,6 +32,8 @@ class DeferredRenderer {
   void ShadowPass();
 
  private:
+  GlContext& context_;
+
   std::unique_ptr<GlTexture2D> position_, normal_, albedo_spec_;
   std::unique_ptr<GlRenderbuffer> depth_;
   std::unique_ptr<GlFramebuffer> gbuffer_;

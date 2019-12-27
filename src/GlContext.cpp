@@ -1,99 +1,95 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <PixelFactory/Event.h>
-#include <PixelFactory/EventHandler.h>
-#include <PixelFactory/Time.h>
-#include <PixelFactory/gl/GlContext.h>
+#include <PixelFactory/GL/GlContext.h>
 
-GlContext::GlContext(int width, int height, const std::string &title) {
-  // Create the GLFW window.
-  window_ = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-  // Check if the window_ could not be created.
-  if (!window_) {
-    throw std::runtime_error("Failed to open GLFW window.");
-  }
-
-  glfwSetWindowUserPointer(window_, this);
-
-  // Make the context of the window.
-  glfwMakeContextCurrent(window_);
+GlContext::GlContext()
+    : null_buffer_(0U), null_renderbuffer_(0U), null_texture2d_(0U),
+      null_texture_cubemap_(0U), default_framebuffer_(0U),
+      null_vertex_array_(0U) {
   if (!gladLoadGL()) {
     throw std::runtime_error("Failed to initialize GLAD.");
   }
   // Get info of GPU and supported OpenGL version.
   std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl
-            << "OpenGL version supported: " << glGetString(GL_VERSION) << std::endl
-            << "Supported GLSL version is: " << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
-
-  // Set swap interval to 1.
-  glfwSwapInterval(0);
-
-  SetupCallbacks();
+            << "OpenGL version supported: " << glGetString(GL_VERSION)
+            << std::endl
+            << "Supported GLSL version is: "
+            << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
   glEnable(GL_CULL_FACE);
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-  handler_ = std::make_unique<EventHandler>();
 }
 
-void GlContext::SetupCallbacks() {
-  // Set the key callback.
-  glfwSetKeyCallback(window_, [](GLFWwindow *window, int key, int scancode,
-                                 int action, int mods) {
-    KeyEvent e{{}, key, scancode, action, mods};
-    switch (e.action) {
-    case GLFW_PRESS:
-      Retrieve(window)->handler_->ProcessEvent("KeyPress", e);
-      break;
-    case GLFW_RELEASE:
-      Retrieve(window)->handler_->ProcessEvent("KeyRelease", e);
-      break;
-    default:
-      break;
-    }
-                     });
-  // Set the window_ resize callback.
-  glfwSetFramebufferSizeCallback(window_,
-                                 [](GLFWwindow *window, int width, int height) {
-                                   Retrieve(window)->handler_->ProcessEvent("Resize", ResizeEvent{{}, width, height});
-                                 });
-  // Set the mouse button callback.
-  glfwSetMouseButtonCallback(window_,
-                             [](GLFWwindow *window, int button, int action, int mods) {
-                               double x, y;
-                               glfwGetCursorPos(window, &x, &y);
-                               MouseButtonEvent e{{}, float(x), float(y), button, action, mods};
-                               switch (e.action) {
-                                 case GLFW_PRESS:Retrieve(window)->handler_->ProcessEvent("MouseButtonPress", e);
-                                   break;
-                                 case GLFW_RELEASE:Retrieve(window)->handler_->ProcessEvent("MouseButtonRelease", e);
-                                   break;
-                                 default:break;
-                               }
-                             });
-  // Set the cursor position callback.
-  glfwSetCursorPosCallback(window_,
-                           [](GLFWwindow *window, double x, double y) {
-                             Retrieve(window)->handler_->ProcessEvent("MouseMove", CursorPositionEvent{{}, float(x), float(y)});
-  });
-
-  // Set the scroll callback.
-  glfwSetScrollCallback(
-      window_, [](GLFWwindow *window, double xoffset, double yoffset) {
-        Retrieve(window)->handler_->ProcessEvent(
-            "Scroll", ScrollEvent{{}, float(xoffset), float(yoffset)});
-      });
-}
-void GlContext::Loop() {
-  Time::Reset();
-  while (!glfwWindowShouldClose(window_)) {
-    Time::Tick();
-    glfwPollEvents();
-    handler_->ProcessEvent("Update", UpdateEvent{{}, Time::Delta()});
-    Draw();
-    glfwSwapBuffers(window_);
+void GlContext::Clear(bool color, bool depth) {
+  GLbitfield mask = 0;
+  if (color) {
+    mask |= GL_COLOR_BUFFER_BIT;
   }
+  if (depth) {
+    mask |= GL_DEPTH_BUFFER_BIT;
+  }
+  glClear(mask);
+}
+
+void GlContext::Viewport(GLint x, GLint y, GLsizei width, GLsizei height) {
+  glViewport(x, y, width, height);
+}
+
+GlBuffer GlContext::CreateBuffer() {
+  GLuint id;
+  glCreateBuffers(1, &id);
+  return GlBuffer(id);
+}
+
+GlRenderbuffer GlContext::CreateRenderbuffer() {
+  GLuint id;
+  glCreateRenderbuffers(1, &id);
+  return GlRenderbuffer(id);
+}
+
+GlTexture2D GlContext::CreateTexture2D() {
+  GLuint id;
+  glCreateTextures(GL_TEXTURE_2D, 1, &id);
+  return GlTexture2D(id);
+}
+
+GlTextureCubemap GlContext::CreateTextureCubemap() {
+  GLuint id;
+  glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &id);
+  return GlTextureCubemap(id);
+}
+
+GlFramebuffer GlContext::CreateFramebuffer() {
+  GLuint id;
+  glCreateFramebuffers(1, &id);
+  return GlFramebuffer(id);
+}
+
+GlVertexArray GlContext::CreateVertexArray() {
+  GLuint id;
+  glCreateVertexArrays(1, &id);
+  return GlVertexArray(id);
+}
+
+void GlContext::Bind(BufferTarget target, GlBuffer &buffer) {
+  glBindBuffer(static_cast<GLenum>(target), buffer.Id());
+}
+
+void GlContext::Bind(GlRenderbuffer &renderbuffer) {
+  glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer.Id());
+}
+
+void GlContext::Bind(FramebufferTarget target, GlFramebuffer &framebuffer) {
+  glBindFramebuffer(static_cast<GLenum>(target), framebuffer.Id());
+}
+
+void GlContext::Bind(GlVertexArray &vertex_array) {
+  glBindVertexArray(vertex_array.Id());
+}
+
+void GlContext::Bind(GlTexture &texture) {
+  glBindTexture(static_cast<GLenum>(texture.Target()), texture.Id());
 }

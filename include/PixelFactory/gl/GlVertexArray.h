@@ -4,14 +4,12 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
-#include <PixelFactory/gl/GlBuffer.h>
+#include <PixelFactory/GL/GlBuffer.h>
+
+class GlContext;
 
 class GlVertexArray {
  public:
-  GlVertexArray() {
-    glCreateVertexArrays(1, &id_);
-  }
-
   GlVertexArray(GlVertexArray &&other) noexcept: id_(other.id_) {
     other.id_ = 0U;
   }
@@ -29,10 +27,6 @@ class GlVertexArray {
   }
 
   [[nodiscard]] GLuint Id() const { return id_; }
-
-  void Bind() { glBindVertexArray(id_); }
-
-  static void Unbind() { glBindVertexArray(0); }
 
   void BindElementBuffer(const GlBuffer &buffer) {
     glVertexArrayElementBuffer(id_, buffer.Id());
@@ -64,6 +58,9 @@ class GlVertexArray {
 
  private:
   GLuint id_ = 0U;
+
+  friend class GlContext;
+  explicit GlVertexArray(GLuint id) : id_(id) {}
 
   template<typename Tuple, std::size_t... Is>
   void SetAttribFormatFromTupleImpl(GLuint bindingindex, std::index_sequence<Is...>) {

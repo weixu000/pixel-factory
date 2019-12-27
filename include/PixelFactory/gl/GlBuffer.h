@@ -1,20 +1,17 @@
 #pragma once
 
+#include <cassert>
 #include <glad/glad.h>
+
+class GlContext;
+
+enum class BufferTarget : GLenum {
+  ArrayBuffer = GL_ARRAY_BUFFER,
+  ElementArrayBuffer = GL_ELEMENT_ARRAY_BUFFER
+};
 
 class GlBuffer {
  public:
-  enum class Target : GLenum {
-    Unbound = 0U,
-    ArrayBuffer = GL_ARRAY_BUFFER,
-    ElementArrayBuffer = GL_ELEMENT_ARRAY_BUFFER
-  };
-
-  GlBuffer(GLsizeiptr size, const void *data, GLbitfield flags = 0) {
-    glCreateBuffers(1, &id_);
-    glNamedBufferStorage(id_, size, data, flags);
-  }
-
   GlBuffer(GlBuffer &&other) noexcept: id_(other.id_) {
     other.id_ = 0U;
   }
@@ -33,20 +30,15 @@ class GlBuffer {
 
   [[nodiscard]] GLuint Id() const { return id_; }
 
-  void Bind(Target target) {
-    target_ = target;
-    glBindBuffer(static_cast<GLenum>(target_), id_);
-  }
-
-  void Unbind() {
-    glBindBuffer(static_cast<GLenum>(target_), 0);
-    target_ = Target::Unbound;
+  void ImmutableStorage(GLsizeiptr size, const void *data, GLbitfield flags = 0) {
+    glNamedBufferStorage(id_, size, data, flags);
   }
 
  private:
   GLuint id_ = 0U;
 
-  Target target_ = Target::Unbound;
+  friend class GlContext;
+  explicit GlBuffer(GLuint id) : id_(id) {}
 };
 
 

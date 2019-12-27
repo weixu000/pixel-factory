@@ -7,15 +7,17 @@
 
 #include <PixelFactory/components/Component.h>
 
+class GlContext;
 class GlVertexArray;
 class GlTextureCubemap;
 
-struct PointLight : public Component {
+class PointLight : public Component {
+ public:
   glm::vec3 color;
   float attenuation;
   float fall_off;
 
-  PointLight();
+  explicit PointLight(GlContext &context);
 
   std::unique_ptr<GlTextureCubemap> shadow_map;
 
@@ -36,4 +38,7 @@ struct PointLight : public Component {
 
   static inline std::unique_ptr<GlVertexArray> vao;
   static inline GLuint count;
+
+ private:
+  GlContext &context_;
 };

@@ -2,17 +2,19 @@
 
 #include <stb_image.h>
 
-#include <PixelFactory/gl/GlTexture.h>
+#include <PixelFactory/GL/GlTexture.h>
+#include <PixelFactory/Image.h>
+
+class GlContext;
 
 class GlTexture2D : public GlTexture {
  public:
-  GlTexture2D(GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height)
-      : GlTexture(Target::Texture2D),
-        width_(width), height_(height) {
+  void ImmutableStorage(GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height) {
     glTextureStorage2D(id_, levels, internalformat, width, height);
   }
 
-  static GlTexture2D FromImageFile(const std::string &image_path, int desired_channels) {
+  void FromImageFile(const std::string &image_path, int desired_channels) {
+    Image image(image_path, desired_channels);
     GLenum format, internalformat;
     switch (desired_channels) {
       case 1:format = GL_RED;
@@ -26,16 +28,8 @@ class GlTexture2D : public GlTexture {
         break;
       default:throw std::invalid_argument("Wrong desired_channels");
     }
-    int width, height, nr_channels;
-    auto data = stbi_load(image_path.c_str(), &width, &height, &nr_channels, desired_channels);
-    if (data == nullptr) {
-      throw std::runtime_error(std::string("stbi_load() failure: ") + stbi_failure_reason());
-    }
-
-    GlTexture2D tex(1, internalformat, width, height);
-    tex.Upload(0, 0, 0, width, height, format, GL_UNSIGNED_BYTE, data);
-    stbi_image_free(data);
-    return tex;
+    ImmutableStorage(1, internalformat, image.width, image.height);
+    Upload(0, 0, 0, image.width, image.height, format, GL_UNSIGNED_BYTE, image.data);
   }
 
   void Upload(GLint level,
@@ -46,5 +40,6 @@ class GlTexture2D : public GlTexture {
   }
 
  private:
-  const GLsizei width_, height_;
+  friend class GlContext;
+  explicit GlTexture2D(GLuint id) : GlTexture(TextureTarget::Texture2D, id) {}
 };

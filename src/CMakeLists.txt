@@ -2,7 +2,10 @@ add_library(PixelFactory STATIC
         ../include/PixelFactory/Event.h
         ../include/PixelFactory/EventHandler.h
         Time.cpp ../include/PixelFactory/Time.h
+        Window.cpp ../include/PixelFactory/Window.h
+        Application.cpp ../include/PixelFactory/Application.h
         ModelLoader.cpp ../include/PixelFactory/ModelLoader.h
+        Image.cpp ../include/PixelFactory/Image.h
         GLContext.cpp ../include/PixelFactory/gl/GlContext.h
         ../include/PixelFactory/gl/GlBuffer.h
         ../include/PixelFactory/gl/GlVertexArray.h

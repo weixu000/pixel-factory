@@ -1,14 +1,21 @@
 #pragma once
 
-#include <PixelFactory/gl/GlTexture.h>
+#include <PixelFactory/GL/GlTexture.h>
+
+class GlContext;
 
 class GlTextureCubemap : public GlTexture {
  public:
-  GlTextureCubemap(GLsizei levels, GLenum internalformat, GLsizei size)
-      : GlTexture(Target::TexutureCubeMap),
-        size_(size) {
+  void ImmutableStorage(GLsizei levels, GLenum internalformat, GLsizei size) {
     glTextureStorage2D(id_, levels, internalformat, size, size);
+    size_ = size;
   }
 
-  const GLsizei size_;
+  [[nodiscard]] GLsizei Size() const { return size_; }
+
+ private:
+  GLsizei size_ = 0;
+
+  friend class GlContext;
+  explicit GlTextureCubemap(GLuint id) : GlTexture(TextureTarget::TexutureCubeMap, id) {}
 };

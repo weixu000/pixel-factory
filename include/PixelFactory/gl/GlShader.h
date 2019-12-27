@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <glad/glad.h>
 
-#include <PixelFactory/gl/Uniform.h>
+#include <PixelFactory/GL/Uniform.h>
 
 class GlShader {
  public:
