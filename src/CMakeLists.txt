@@ -9,8 +9,9 @@ add_library(PixelFactory STATIC
         GLContext.cpp ../include/PixelFactory/gl/GlContext.h
         ../include/PixelFactory/gl/GlBuffer.h
         ../include/PixelFactory/gl/GlVertexArray.h
-        ../include/PixelFactory/gl/Uniform.h
+        ../include/PixelFactory/gl/GlUniform.h
         GLShader.cpp ../include/PixelFactory/gl/GlShader.h
+        GlProgram.cpp ../include/PixelFactory/gl/GlProgram.h
         ../include/PixelFactory/gl/GlFramebuffer.h
         ../include/PixelFactory/gl/GlRenderbuffer.h
         ../include/PixelFactory/gl/GlTexture.h

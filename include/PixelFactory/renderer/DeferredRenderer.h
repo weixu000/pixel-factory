@@ -9,6 +9,7 @@ class GlContext;
 class GlTexture2D;
 class GlRenderbuffer;
 class GlFramebuffer;
+class GlProgram;
 class Entity;
 class Mesh;
 class PointLight;
@@ -34,6 +35,10 @@ class DeferredRenderer {
 
  private:
   GlContext &context_;
+
+  std::unique_ptr<GlProgram> geomtery_shader_;
+  std::unique_ptr<GlProgram> lighting_shader_;
+  std::unique_ptr<GlProgram> shadow_shader_;
 
   std::unique_ptr<GlTexture2D> position_, normal_, albedo_spec_;
   std::unique_ptr<GlRenderbuffer> depth_;

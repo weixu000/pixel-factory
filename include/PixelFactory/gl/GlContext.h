@@ -2,6 +2,7 @@
 
 #include "PixelFactory/gl/GlBuffer.h"
 #include "PixelFactory/gl/GlFramebuffer.h"
+#include "PixelFactory/gl/GlProgram.h"
 #include "PixelFactory/gl/GlRenderbuffer.h"
 #include "PixelFactory/gl/GlTexture2D.h"
 #include "PixelFactory/gl/GlTextureCubemap.h"
@@ -25,12 +26,16 @@ public:
   GlTextureCubemap CreateTextureCubemap();
   GlFramebuffer CreateFramebuffer();
   GlVertexArray CreateVertexArray();
+  GlProgram CreateProgram(const std::string &vertex_file_path,
+                          const std::string &fragment_file_path = "",
+                          const std::string &geometry_file_path = "");
 
   void Bind(BufferTarget target, GlBuffer &buffer);
   void Bind(GlRenderbuffer &renderbuffer);
   void Bind(GlTexture &texture);
   void Bind(FramebufferTarget target, GlFramebuffer &framebuffer);
   void Bind(GlVertexArray &vertex_array);
+  void Use(GlProgram &program);
 
   GlBuffer &NullBuffer() { return null_buffer_; }
   GlRenderbuffer &NullRenderbuffer() { return null_renderbuffer_; }
@@ -38,6 +43,7 @@ public:
   GlTextureCubemap &NullTextureCubemap() { return null_texture_cubemap_; }
   GlFramebuffer &DefaultFramebuffer() { return default_framebuffer_; }
   GlVertexArray &NullVertexArray() { return null_vertex_array_; }
+  GlProgram &NullProgram() { return null_program_; }
 
  private:
   // Objects with name 0
@@ -47,4 +53,5 @@ public:
   GlTextureCubemap null_texture_cubemap_;
   GlFramebuffer default_framebuffer_;  // Default framebuffer
   GlVertexArray null_vertex_array_;
+  GlProgram null_program_;
 };

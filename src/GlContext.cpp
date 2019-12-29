@@ -1,12 +1,18 @@
+#include "PixelFactory/gl/GlContext.h"
+
 #include <iostream>
 #include <stdexcept>
 
-#include <PixelFactory/GL/GlContext.h>
+#include "PixelFactory/gl/GlShader.h"
 
 GlContext::GlContext()
-    : null_buffer_(0U), null_renderbuffer_(0U), null_texture2d_(0U),
-      null_texture_cubemap_(0U), default_framebuffer_(0U),
-      null_vertex_array_(0U) {
+    : null_buffer_(0U),
+      null_renderbuffer_(0U),
+      null_texture2d_(0U),
+      null_texture_cubemap_(0U),
+      default_framebuffer_(0U),
+      null_vertex_array_(0U),
+      null_program_(0U) {
   if (!gladLoadGL()) {
     throw std::runtime_error("Failed to initialize GLAD.");
   }
@@ -74,6 +80,39 @@ GlVertexArray GlContext::CreateVertexArray() {
   return GlVertexArray(id);
 }
 
+GlProgram GlContext::CreateProgram(const std::string &vertex_file_path,
+                                   const std::string &fragment_file_path,
+                                   const std::string &geometry_file_path) {
+  GlShader vertex(ShaderType::VertexShader, vertex_file_path);
+  GlShader fragment =
+      fragment_file_path.empty()
+          ? GlShader()
+          : GlShader(ShaderType::FragmentShader, fragment_file_path);
+  GlShader geometry =
+      geometry_file_path.empty()
+          ? GlShader()
+          : GlShader(ShaderType::GeometryShader, geometry_file_path);
+
+  GlProgram program(glCreateProgram());
+  program.Attach(vertex);
+  if (!fragment_file_path.empty()) {
+    program.Attach(fragment);
+  }
+  if (!geometry_file_path.empty()) {
+    program.Attach(geometry);
+  }
+  program.Link();
+  program.Detach(vertex);
+  if (!fragment_file_path.empty()) {
+    program.Detach(fragment);
+  }
+  if (!geometry_file_path.empty()) {
+    program.Detach(geometry);
+  }
+  program.GetActiveUniformLocations();
+  return program;
+}
+
 void GlContext::Bind(BufferTarget target, GlBuffer &buffer) {
   glBindBuffer(static_cast<GLenum>(target), buffer.Id());
 }
@@ -93,3 +132,5 @@ void GlContext::Bind(GlVertexArray &vertex_array) {
 void GlContext::Bind(GlTexture &texture) {
   glBindTexture(static_cast<GLenum>(texture.Target()), texture.Id());
 }
+
+void GlContext::Use(GlProgram &program) { glUseProgram(program.Id()); }

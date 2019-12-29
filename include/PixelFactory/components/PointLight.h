@@ -20,30 +20,14 @@ class PointLight : public Component {
 
   explicit PointLight(GlContext &context);
 
-  std::unique_ptr<GlTextureCubemap> shadow_map;
+  std::shared_ptr<GlTextureCubemap> shadow_map;
 
-  static inline const float z_near = 0.1f, z_far = 100.0f;
+  std::shared_ptr<GlVertexArray> vao;
+  GLuint count;
 
-  static inline const glm::mat4 shadow_projection =
-      glm::perspective(glm::half_pi<float>(), 1.0f, z_near, z_far);
-
-  static inline const std::array<glm::mat4, 6> shadow_view{
-      glm::lookAt(glm::vec3(0.0f), glm::vec3(1.0f, 0.0f, 0.0f),
-                  glm::vec3(0.0f, -1.0f, 0.0f)),
-      glm::lookAt(glm::vec3(0.0f), glm::vec3(-1.0f, 0.0f, 0.0f),
-                  glm::vec3(0.0f, -1.0f, 0.0f)),
-      glm::lookAt(glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f),
-                  glm::vec3(0.0f, 0.0f, 1.0f)),
-      glm::lookAt(glm::vec3(0.0f), glm::vec3(0.0f, -1.0f, 0.0f),
-                  glm::vec3(0.0f, 0.0f, -1.0f)),
-      glm::lookAt(glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, 1.0f),
-                  glm::vec3(0.0f, -1.0f, 0.0f)),
-      glm::lookAt(glm::vec3(0.0f), glm::vec3(0.0f, 0.0f, -1.0f),
-                  glm::vec3(0.0f, -1.0f, 0.0f)),
-  };
-
-  static inline std::unique_ptr<GlVertexArray> vao;
-  static inline GLuint count;
+  static const float z_near, z_far;
+  static const glm::mat4 shadow_projection;
+  static const std::array<glm::mat4, 6> shadow_view;
 
  private:
   GlContext &context_;

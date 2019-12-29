@@ -5,6 +5,8 @@
 #include "PixelFactory/components/Component.h"
 
 class GlContext;
+class GlVertexArray;
+class GlProgram;
 
 class Axes : public Component {
  public:
@@ -14,4 +16,6 @@ class Axes : public Component {
 
  private:
   GlContext &context_;
+  std::shared_ptr<GlVertexArray> vao_;
+  std::shared_ptr<GlProgram> shader_;
 };
