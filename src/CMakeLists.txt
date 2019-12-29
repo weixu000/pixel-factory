@@ -29,6 +29,6 @@ add_library(PixelFactory STATIC
         Axes.cpp ../include/PixelFactory/components/Axes.h
         Mesh.cpp ../include/PixelFactory/components/Mesh.h
         PointLight.cpp ../include/PixelFactory/components/PointLight.h)
-target_link_libraries(PixelFactory PUBLIC glad glfw glm tinyobjloader stb_image)
+target_link_libraries(PixelFactory PUBLIC glad glfw glm tinyobjloader stb_image spdlog)
 target_include_directories(PixelFactory PUBLIC ../include)
 target_compile_features(PixelFactory PUBLIC cxx_std_17)

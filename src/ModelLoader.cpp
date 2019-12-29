@@ -1,8 +1,8 @@
 #include "PixelFactory/ModelLoader.h"
 
+#include <spdlog/spdlog.h>
 #include <tiny_obj_loader.h>
 
-#include <iostream>
 #include <map>
 
 namespace {
@@ -17,9 +17,10 @@ std::tuple<tinyobj::attrib_t, std::vector<tinyobj::shape_t>> LoadTinyObj(
     throw std::runtime_error("tinyobj::LoadObj error: " + err);
   }
   if (!warn.empty()) {
-    std::cout << "tinyobj::LoadObj warning: " << warn << std::endl;
+    spdlog::warn("tinyobj warning: {}", warn);
   }
 
+  spdlog::debug("{} loaded", file_path);
   return std::make_tuple(attrib, shapes);
 }
 }  // namespace

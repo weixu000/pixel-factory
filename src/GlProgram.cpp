@@ -1,6 +1,6 @@
 #include "PixelFactory/gl/GlProgram.h"
 
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 void GlProgram::Attach(GlShader &shader) { glAttachShader(id_, shader.Id()); }
 
@@ -16,7 +16,7 @@ void GlProgram::Link() {
     std::string msg(log_length, '\0');
     glGetProgramInfoLog(id_, log_length, nullptr, msg.data());
     glDeleteProgram(id_);
-    std::cerr << msg << std::endl;
+    spdlog::warn("Program linking log: {}", msg);
   }
 
   if (result != GL_TRUE) {

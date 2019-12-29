@@ -2,8 +2,7 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 #include "PixelFactory/Time.h"
 #include "PixelFactory/Window.h"
@@ -11,8 +10,7 @@
 namespace {
 void ErrorCallback(int error, const char *description) {
   // Print error.
-  std::cerr << description << std::endl;
-  exit(EXIT_FAILURE);
+  throw std::runtime_error(description);
 }
 }  // namespace
 
@@ -29,14 +27,17 @@ Application::Application() {
 
   // Setup error callback.
   glfwSetErrorCallback(ErrorCallback);
+  spdlog::trace("Application initialized");
 }
 
 Application::~Application() {
   glfwTerminate();
   application_ = nullptr;
+  spdlog::trace("Application exited");
 }
 
 int Application::Run() {
+  spdlog::trace("Application loop entered");
   Time::Reset();
   bool all_closed;
   do {

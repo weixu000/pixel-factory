@@ -4,7 +4,6 @@
 #include <GLFW/glfw3.h>
 
 #include <glm/gtx/transform.hpp>
-#include <iostream>
 
 #include "PixelFactory/Entity.h"
 #include "PixelFactory/Event.h"

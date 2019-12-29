@@ -1,5 +1,7 @@
 #include "PixelFactory/renderer/DeferredRenderer.h"
 
+#include <spdlog/spdlog.h>
+
 #include <glm/gtx/transform.hpp>
 
 #include "PixelFactory/Entity.h"
@@ -54,6 +56,8 @@ DeferredRenderer::DeferredRenderer(GlContext &context, int width, int height)
   shadow_ = std::make_unique<GlFramebuffer>(context_.CreateFramebuffer());
   shadow_->ReadBuffer(GL_NONE);
   shadow_->DrawBuffers({GL_NONE});
+
+  spdlog::debug("DeferredRenderer Created");
 }
 
 void DeferredRenderer::Collect(const Entity &scene) {
@@ -68,9 +72,12 @@ void DeferredRenderer::Collect(const Entity &scene) {
       }
     });
   });
+  spdlog::debug("DeferredRenderer Collected {} meshes, {} lights",
+                meshes_.size(), lights_.size());
 }
 
 void DeferredRenderer::GeometryPass(const DrawOptions &options) {
+  spdlog::debug("DeferredRenderer geometry pass");
   context_.Bind(FramebufferTarget::Framebuffer, *gbuffer_);
   context_.Clear(true, true);
 
@@ -96,6 +103,7 @@ void DeferredRenderer::GeometryPass(const DrawOptions &options) {
 }
 
 void DeferredRenderer::LightingPass(const DrawOptions &options) {
+  spdlog::debug("DeferredRenderer lighting pass");
   context_.Clear(true, true);
 
   context_.Use(*lighting_shader_);
@@ -150,6 +158,7 @@ void DeferredRenderer::LightingPass(const DrawOptions &options) {
 }
 
 void DeferredRenderer::ShadowPass() {
+  spdlog::debug("DeferredRenderer shadow pass");
   context_.Bind(FramebufferTarget::Framebuffer, *shadow_);
   context_.Use(*shadow_shader_);
 

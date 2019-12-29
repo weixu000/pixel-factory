@@ -2,8 +2,7 @@
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-
-#include <iostream>
+#include <spdlog/spdlog.h>
 
 #include "PixelFactory/Application.h"
 #include "PixelFactory/Event.h"
@@ -33,6 +32,8 @@ Window::Window(int width, int height, const std::string &title) {
   handler_ = std::make_unique<EventHandler>();
 
   Application::Instance().windows_.push_back(this);
+
+  spdlog::trace("Window created with title: {}", title);
 }
 
 Window::~Window() {

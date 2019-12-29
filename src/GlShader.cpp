@@ -1,7 +1,8 @@
 #include "PixelFactory/gl/GlShader.h"
 
+#include <spdlog/spdlog.h>
+
 #include <fstream>
-#include <iostream>
 
 void GlShader::Compile(const std::string &file_path) {
   // Read shader code from the shader file.
@@ -28,10 +29,11 @@ void GlShader::Compile(const std::string &file_path) {
   if (log_length > 0) {
     std::string msg(log_length, '\0');
     glGetShaderInfoLog(id_, log_length, nullptr, msg.data());
-    std::cerr << msg << std::endl;
+    spdlog::warn("Shader compilation log: {}", msg);
   }
 
   if (result != GL_TRUE) {
     throw std::runtime_error("Shader compilation error: " + file_path);
   }
+  spdlog::debug("{} compiled", file_path);
 }

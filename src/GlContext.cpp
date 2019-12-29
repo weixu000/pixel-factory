@@ -1,6 +1,7 @@
 #include "PixelFactory/gl/GlContext.h"
 
-#include <iostream>
+#include <spdlog/spdlog.h>
+
 #include <stdexcept>
 
 #include "PixelFactory/gl/GlShader.h"
@@ -17,11 +18,9 @@ GlContext::GlContext()
     throw std::runtime_error("Failed to initialize GLAD.");
   }
   // Get info of GPU and supported OpenGL version.
-  std::cout << "Renderer: " << glGetString(GL_RENDERER) << std::endl
-            << "OpenGL version supported: " << glGetString(GL_VERSION)
-            << std::endl
-            << "Supported GLSL version is: "
-            << glGetString(GL_SHADING_LANGUAGE_VERSION) << std::endl;
+  spdlog::info("Renderer: {}", glGetString(GL_RENDERER));
+  spdlog::info("OpenGL: {}", glGetString(GL_VERSION));
+  spdlog::info("GLSL: {}", glGetString(GL_SHADING_LANGUAGE_VERSION));
 
   glEnable(GL_DEPTH_TEST);
   glDepthFunc(GL_LEQUAL);
